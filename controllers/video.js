@@ -3,18 +3,17 @@ const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const { v4: uuidv4 } = require("uuid");
 
-const config = require("../config/constants.json");
+const constants = require("../config/constants.json");
 const Video = require("../models/video");
 const ShareableLink = require("../models/share-link");
 
-const { hypheniseFileName } = require("../utils/common");
+const { hypheniseFileName, getUniqueElements } = require("../utils/common");
+const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
+
+const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
 
 class VideoController {
   constructor() {}
-
-  async greet(req, res) {
-    return res.send("Video Route");
-  }
 
   async uploadVideo(req, res) {
     try {
@@ -25,26 +24,26 @@ class VideoController {
 
       const { size, path, originalname } = file;
 
-      if (size > config.FFMPEG.maxSize * 1024 * 1024) {
+      if (size > MAX_ALLOWED_FILE_SIZE) {
         return res
           .status(400)
           .json({ error: "File size exceeds the maximum limit" });
       }
 
-      ffmpeg.ffprobe(path, (err, metadata) => {
+      ffmpeg.ffprobe(path, async (err, metadata) => {
         if (err) return res.status(500).json({ error: "Invalid video file" });
 
         const duration = metadata.format.duration;
 
         if (
-          duration < config.FFMPEG.minDuration ||
-          duration > config.FFMPEG.maxDuration
+          duration < constants.ffmpeg.minDuration ||
+          duration > constants.ffmpeg.maxDuration
         ) {
           fs.unlinkSync(path); // delete file if invalid duration
           return res.status(400).json({ error: "Invalid video duration" });
         }
 
-        Video.create({
+        await Video.create({
           title: originalname,
           filePath: path,
           size,
@@ -81,8 +80,6 @@ class VideoController {
       if (!video) {
         return res.status(404).json({ error: "Video not found" });
       }
-
-      console.log(video);
 
       const inputPath = path.join(
         path.dirname(require.main.filename),
@@ -121,7 +118,57 @@ class VideoController {
     }
   }
 
-  async mergeVideos(req, res) {}
+  async mergeVideos(req, res) {
+    try {
+      const { videoIds } = req.body;
+
+      const videos = await Video.findAll({ where: { id: videoIds } });
+      if (videos.length !== videoIds.length)
+        return res.status(404).json({ error: "One or more videos not found" });
+
+      const ffmpegCommand = ffmpeg();
+
+      const outputFilename = `merged-${Date.now()}.mp4`;
+      const outputPath = path.join("uploads", outputFilename);
+
+      const dimensions = await Promise.all(
+        videos.map(async (v) => {
+          const { width, height } = await getVideoDimensions(v.filePath);
+          return `w${width}:h${height}`;
+        })
+      );
+
+      if (getUniqueElements(dimensions).length > 1) {
+        return res
+          .status(400)
+          .json({ error: "Cannot merge videos with different dimensions" });
+      }
+
+      videos.forEach((video) => ffmpegCommand.input(video.filePath));
+
+      ffmpegCommand
+        .on("end", async () => {
+          const duration = await getVideoDuration(outputPath);
+
+          await Video.create({
+            title: outputFilename,
+            filePath: outputPath,
+            size: fs.statSync(outputPath).size,
+            duration,
+          });
+
+          return res.status(200).json({ message: "Videos merged", outputPath });
+        })
+        .on("error", (err) =>
+          res
+            .status(500)
+            .json({ error: "Error merging videos", err: err.stack })
+        )
+        .mergeToFile(outputPath);
+    } catch (error) {
+      return res.status(500).json({ error: error.stack });
+    }
+  }
 
   async generateShareLink(req, res) {
     try {

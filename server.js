@@ -1,8 +1,9 @@
+const fs = require("fs");
 const express = require("express");
 const path = require("path");
 
 const sequelize = require("./config/database");
-const config = require("./config/constants.json");
+const constants = require("./config/constants.json");
 
 const app = express();
 
@@ -20,13 +21,19 @@ const videoRoute = require("./routes/video");
 
 app.use(express.json({ extended: false }));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+if (!fs.existsSync(constants.app.outputDirectory)) {
+  fs.mkdirSync(constants.app.outputDirectory);
+}
+
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, constants.app.outputDirectory))
+);
 
 // Registering URL Route
 app.use("/video", videoRoute);
 
 // Server Running on PORT
-const { PORT } = config;
-app.listen(PORT, function () {
-  console.log(`Server Running on PORT: ${PORT}`);
+app.listen(constants.app.port, function () {
+  console.log(`Server Running on PORT: ${constants.app.port}`);
 });

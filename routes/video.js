@@ -15,7 +15,7 @@ router.post(
 
 router.post("/trim/:videoId", videoController.trimVideo);
 
-router.get("/merge", videoController.greet);
+router.get("/merge", videoController.mergeVideos);
 
 router.post("/share/:videoId", videoController.generateShareLink);
 

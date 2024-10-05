@@ -1,10 +1,18 @@
 {
-  "PORT": 3000,
-
-  "FFMPEG": {
+  "ffmpeg": {
     "maxDuration": 100,
     "minDuration": 5,
     "maxSize": 25
+  },
+
+  "app": {
+    "port": 3000,
+    "outputDirectory": "uploads",
+    "allowedFileExtensions": [".mp4"]
+  },
+
+  "db": {
+    "fileName": "database.sqlite"
   },
 
   "apiToken": "static-token",
