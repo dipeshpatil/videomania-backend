@@ -7,11 +7,10 @@ const config = require("../config/constants.json");
 const Video = require("../models/video");
 const ShareableLink = require("../models/share-link");
 
+const { hypheniseFileName } = require("../utils/common");
+
 class VideoController {
-  constructor() {
-    this.urlBucket = {};
-    this.urlAnalyticsBucket = {};
-  }
+  constructor() {}
 
   async greet(req, res) {
     return res.send("Video Route");
@@ -59,7 +58,68 @@ class VideoController {
     }
   }
 
-  async trimVideo(req, res) {}
+  async trimVideo(req, res) {
+    const { videoId } = req.params;
+    const { start, end } = req.body; // Expiry time in minutes
+
+    // Validate start and end times
+    const startTime = parseFloat(start);
+    const endTime = parseFloat(end);
+
+    if (
+      isNaN(startTime) ||
+      isNaN(endTime) ||
+      startTime < 0 ||
+      endTime <= startTime
+    ) {
+      return res.status(400).json({ error: "Invalid start or end time" });
+    }
+
+    try {
+      // Check if the video exists
+      const video = await Video.findByPk(videoId);
+      if (!video) {
+        return res.status(404).json({ error: "Video not found" });
+      }
+
+      console.log(video);
+
+      const inputPath = path.join(
+        path.dirname(require.main.filename),
+        video.filePath
+      );
+      const outputFilename = `trimmed-${Date.now()}-${hypheniseFileName(
+        video.title
+      )}`;
+      const outputPath = path.join("uploads", outputFilename);
+
+      ffmpeg(inputPath)
+        .setStartTime(startTime) // Set the start time for trimming
+        .setDuration(endTime - startTime) // Set the duration for trimming
+        .output(outputPath) // Output the trimmed video
+        .on("end", async (video) => {
+          // Optionally save the trimmed video metadata (if you want to track it)
+          await Video.create({
+            title: outputFilename,
+            filePath: outputPath,
+            size: fs.statSync(outputPath).size,
+            duration: endTime - startTime,
+          });
+
+          res.status(200).json({
+            message: "Video trimmed successfully",
+            trimmedVideoPath: `/uploads/${outputFilename}`,
+          });
+        })
+        .on("error", (err) => {
+          console.error("Error trimming video:", err);
+          res.status(500).json({ error: "Failed to trim video" });
+        })
+        .run();
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 
   async mergeVideos(req, res) {}
 

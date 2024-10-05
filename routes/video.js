@@ -2,35 +2,27 @@ const express = require("express");
 
 const router = express.Router();
 
+const { MulterUtil } = require("../utils/multer");
 const VideoController = require("../controllers/video");
-const {
-  MulterUtil: { upload },
-} = require("../utils/multer");
 
 const videoController = new VideoController();
 
 router.post(
   "/upload",
-  upload.single("file"),
-  videoController.uploadVideo.bind(videoController)
+  MulterUtil.upload.single("file"),
+  videoController.uploadVideo
 );
 
-router.get("/trim/:videoId", videoController.greet.bind(videoController));
+router.post("/trim/:videoId", videoController.trimVideo);
 
-router.get("/merge", videoController.greet.bind(videoController));
+router.get("/merge", videoController.greet);
 
-router.post(
-  "/share/:videoId",
-  videoController.generateShareLink.bind(videoController)
-);
+router.post("/share/:videoId", videoController.generateShareLink);
 
-router.get(
-  "/share/:link",
-  videoController.shareVideoLink.bind(videoController)
-);
+router.get("/share/:link", videoController.shareVideoLink);
 
-router.get("/all", videoController.getAllVideos.bind(videoController));
+router.get("/all", videoController.getAllVideos);
 
-router.get("/all-links", videoController.getAllLinks.bind(videoController));
+router.get("/all-links", videoController.getAllLinks);
 
 module.exports = router;

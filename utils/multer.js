@@ -1,6 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 
+const { hypheniseFileName } = require("./common");
+
 // Set up multer storage configuration
 function getMulterStorage() {
   return multer.diskStorage({
@@ -9,10 +11,7 @@ function getMulterStorage() {
     },
     filename: function (req, file, cb) {
       // Save file with original filename, or customize this if needed
-      cb(
-        null,
-        `${Date.now()}-${file.originalname.toLowerCase().replace(/\s+/g, "-")}`
-      );
+      cb(null, `${Date.now()}-${hypheniseFileName(file.originalname)}`);
     },
   });
 }
