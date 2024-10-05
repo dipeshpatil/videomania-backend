@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require("path");
+
 const sequelize = require("./config/database");
 const config = require("./config/constants.json");
 
@@ -17,6 +19,8 @@ sequelize
 const videoRoute = require("./routes/video");
 
 app.use(express.json({ extended: false }));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Registering URL Route
 app.use("/video", videoRoute);

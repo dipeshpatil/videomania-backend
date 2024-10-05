@@ -1,3 +1,12 @@
 {
-  "PORT": 3000
+  "PORT": 3000,
+
+  "FFMPEG": {
+    "maxDuration": 100,
+    "minDuration": 5,
+    "maxSize": 25
+  },
+
+  "apiToken": "static-token",
+  "tokenExpiry": "36000000"
 }
