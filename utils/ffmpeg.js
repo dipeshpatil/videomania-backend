@@ -25,7 +25,7 @@ function getVideoDuration(filepath) {
       if (err) {
         return reject(`Error retrieving video duration: ${err.message}`);
       }
-      // Extract the width and height from the first video stream
+      // Extract the video duration from the metadata
       const videoDuration = metadata.format.duration;
       if (videoDuration) {
         resolve(videoDuration);

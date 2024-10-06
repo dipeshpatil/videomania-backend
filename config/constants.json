@@ -8,7 +8,8 @@
   "app": {
     "port": 3000,
     "outputDirectory": "uploads",
-    "allowedFileExtensions": [".mp4"]
+    "allowedFileExtensions": [".mp4"],
+    "expiredLinkFrequencyMinutes": 5
   },
 
   "db": {
