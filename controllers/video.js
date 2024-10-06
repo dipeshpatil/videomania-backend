@@ -87,10 +87,7 @@ class VideoController {
         return res.status(404).json({ error: "Video not found" });
       }
 
-      const inputPath = path.join(
-        path.dirname(require.main.filename),
-        video.filePath
-      );
+      const inputPath = video.filePath;
       const outputFilename = `trimmed-${Date.now()}-${hypheniseFileName(
         video.title
       )}`;
@@ -185,7 +182,6 @@ class VideoController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        console.log(req.body);
         return res.status(400).json({ errors: errors.array() });
       }
 
@@ -216,7 +212,7 @@ class VideoController {
       // Generate the shareable URL
       const shareableUrl = `${req.protocol}://${req.get("host")}/video/share/${
         shareableLink.link
-      }`;
+      }?token=${process.env.STATIC_TOKEN}`;
 
       res.status(201).json({
         message: "Shareable link generated successfully",

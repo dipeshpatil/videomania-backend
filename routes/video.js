@@ -27,7 +27,7 @@ router.post(
   videoController.trimVideo
 );
 
-router.get(
+router.post(
   "/merge",
   [authenticateToken, basicMergeValidator],
   videoController.mergeVideos

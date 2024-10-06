@@ -21,16 +21,13 @@ function getMulterStorageInstance() {
 function getMulterUploadInstance() {
   return multer({
     storage: getMulterStorageInstance(),
-    limits: { fileSize: 25 * 1024 * 1024 }, // Set a limit (25 MB for example)
+    limits: { fileSize: constants.ffmpeg.maxSize * 1024 * 1024 }, // Set a limit (25 MB for example)
     fileFilter: (req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase();
       if (!constants.app.allowedFileExtensions.includes(ext)) {
+        // Instead of generic Error, pass an object with more details
         return cb(
-          new Error(
-            `Only ${constants.app.allowedFileExtensions
-              .map((e) => e.toUpperCase().slice(1))
-              .join(", ")} files are allowed`
-          )
+          new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.originalname)
         );
       }
       cb(null, true);

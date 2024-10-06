@@ -2,6 +2,7 @@ const { body, param } = require("express-validator");
 
 module.exports = {
   basicVideoTrimValidator: [
+    param("videoId").isInt().withMessage("videoId must be an integer"),
     body("start", "Start Time is required").not().isEmpty(),
     body("end", "End Time is required").not().isEmpty(),
   ],

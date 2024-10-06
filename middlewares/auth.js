@@ -1,5 +1,5 @@
 const authenticateToken = (req, res, next) => {
-  const token = req.headers["x-auth-token"];
+  const token = req.headers["x-auth-token"] || req.query.token;
 
   if (token === process.env.STATIC_TOKEN) {
     next(); // Token is valid, proceed with the request
