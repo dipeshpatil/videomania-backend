@@ -53,9 +53,9 @@ router.post(
 
 /**
  * @route   POST /share/:videoId
- * @desc    Generate a time-limited shareable link for a previously uploaded video, With specifying optional expiryTime in minutes. Default is 10 mins.
+ * @desc    Generate a time-limited shareable link for a previously uploaded video, With specifying optional expiryDuration in minutes. Default is 10 mins.
  * @access  Private (requires static API token)
- * @body    { expiryTime: <number> }  // Example: { "expiryTime": 30 }
+ * @body    { expiryDuration: <number> }  // Example: { "expiryDuration": 30 }
  */
 router.post(
   "/share/:videoId",
