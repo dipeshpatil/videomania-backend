@@ -61,7 +61,7 @@ describe("POST /video/merge", () => {
         videoIds: [1, 2],
       });
     expect(res.status).to.equal(200);
-    expect(res.body.message).to.equal("Videos merged");
+    expect(res.text).to.include("merged-");
   });
 
   it("should return 403 for missing Auth Token", async () => {
@@ -108,7 +108,7 @@ describe("POST /video/trim/:videoId", () => {
         start: 3,
       });
     expect(res.status).to.equal(200);
-    expect(res.body.message).to.equal("Video trimmed successfully");
+    expect(res.text).to.include("trimmed-");
   });
 
   it("should return 403 for missing Auth Token", async () => {

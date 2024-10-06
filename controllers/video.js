@@ -104,12 +104,9 @@ class VideoController {
             filePath: outputPath,
             size: fs.statSync(outputPath).size,
             duration: endTime - startTime,
-          });
-
-          res.status(200).json({
-            message: "Video trimmed successfully",
-            trimmedVideoPath: `/uploads/${outputFilename}`,
-          });
+          })
+            .then((video) => res.status(200).json(video))
+            .catch((error) => res.status(500).json({ error }));
         })
         .on("error", (err) => {
           console.error("Error trimming video:", err);
@@ -163,9 +160,9 @@ class VideoController {
             filePath: outputPath,
             size: fs.statSync(outputPath).size,
             duration,
-          });
-
-          return res.status(200).json({ message: "Videos merged", outputPath });
+          })
+            .then((video) => res.status(200).json(video))
+            .catch((error) => res.status(500).json({ error }));
         })
         .on("error", (err) =>
           res
