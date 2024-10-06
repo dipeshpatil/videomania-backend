@@ -1,3 +1,5 @@
+require("dotenv").config({ path: "./.env" });
+
 const fs = require("fs");
 const express = require("express");
 const path = require("path");
@@ -7,6 +9,7 @@ const constants = require("./config/constants.json");
 
 const app = express();
 
+// Init DB Connection
 sequelize
   .sync({ force: false }) // force: false prevents dropping tables, set to true for dev
   .then(() => {
@@ -16,11 +19,12 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
-// Importing URL Route
+// Importing Video Route
 const videoRoute = require("./routes/video");
 
 app.use(express.json({ extended: false }));
 
+// Creating uploads/ folder to store output videos
 if (!fs.existsSync(constants.app.outputDirectory)) {
   fs.mkdirSync(constants.app.outputDirectory);
 }

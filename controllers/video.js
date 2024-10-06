@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const { v4: uuidv4 } = require("uuid");
+const { validationResult } = require("express-validator");
 
 const constants = require("../config/constants.json");
 const Video = require("../models/video");
@@ -58,6 +59,11 @@ class VideoController {
   }
 
   async trimVideo(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { videoId } = req.params;
     const { start, end } = req.body; // Expiry time in minutes
 
@@ -120,6 +126,11 @@ class VideoController {
 
   async mergeVideos(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
       const { videoIds } = req.body;
 
       const videos = await Video.findAll({ where: { id: videoIds } });
@@ -172,6 +183,12 @@ class VideoController {
 
   async generateShareLink(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        console.log(req.body);
+        return res.status(400).json({ errors: errors.array() });
+      }
+
       const { videoId } = req.params;
       const { expiryDuration } = req.body; // Expiry time in minutes
 
