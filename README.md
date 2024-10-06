@@ -60,6 +60,7 @@ This will run all the tests from the `test/` directory. As of now all the tests 
 The Postman Collection is attached in the project root directory, which can be imported in Postman and can get readily started. There are 5 main endpoints
 
 Postman Collection File Name: `API.postman_collection.json`
+This collection has a `{{local}}` variable that needs to be configured in Postman once the collection is imported. The value is `http://localhost:<PORT>` for local environment
 
 1. POST `/video/upload` - Upload a Video
 2. POST `/video/trim/:videoId` - Trim a Video
