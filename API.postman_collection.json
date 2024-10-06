@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "b2c1a1df-17c4-4433-8628-5b8a35bbd2c4",
+		"name": "VideoVerse Assignment API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23539036"
+	},
+	"item": [
+		{
+			"name": "Upload Video",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "static-token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/dipeshpatil/Downloads/That's What She Said Speech.mp4"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{local}}/video/upload",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Share Link",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "static-token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"expiryDuration\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/video/share/3",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"share",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Share Video Link",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "static-token",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{local}}/video/share/f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"share",
+						"f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trim Video",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "static-token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"start\": 3,\n    \"end\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/video/trim/1",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"trim",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Merge Videos",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "static-token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"videoIds\": [\n        1,\n        2\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/video/merge",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"merge"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All Videos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{local}}/video/all?token=static-token",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"all"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "static-token"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All Video Links",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{local}}/video/all-links?token=static-token",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"video",
+						"all-links"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "static-token"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

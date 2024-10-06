@@ -19,6 +19,7 @@ const videoController = new VideoController();
  * @route   POST /upload
  * @desc    Upload a video file with size and duration validation
  * @access  Private (requires static API token)
+ * @body    { file: <file> }  // Example: { "file": <video file> }
  */
 router.post(
   "/upload",
@@ -30,6 +31,7 @@ router.post(
  * @route   POST /trim/:videoId
  * @desc    Trim a previously uploaded video by adjusting the start or end times
  * @access  Private (requires static API token)
+ * @body    { start: <number>, end: <number> }  // Example: { "start": 5, "end": 60 }
  */
 router.post(
   "/trim/:videoId",
@@ -41,6 +43,7 @@ router.post(
  * @route   POST /merge
  * @desc    Merge multiple previously uploaded video clips into a single video
  * @access  Private (requires static API token)
+ * @body    { videoIds: [<number>] }  // Example: { "videoIds": [1, 2, 3] }
  */
 router.post(
   "/merge",
@@ -50,8 +53,9 @@ router.post(
 
 /**
  * @route   POST /share/:videoId
- * @desc    Generate a time-limited shareable link for a previously uploaded video
+ * @desc    Generate a time-limited shareable link for a previously uploaded video, With specifying optional expiryTime in minutes. Default is 10 mins.
  * @access  Private (requires static API token)
+ * @body    { expiryTime: <number> }  // Example: { "expiryTime": 30 }
  */
 router.post(
   "/share/:videoId",
@@ -63,6 +67,7 @@ router.post(
  * @route   GET /share/:link
  * @desc    Access a shared video using a time-limited shareable link
  * @access  Private (requires static API token)
+ * @body    None
  */
 router.get("/share/:link", [authenticateToken], videoController.shareVideoLink);
 
