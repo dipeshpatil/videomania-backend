@@ -52,6 +52,16 @@ describe("POST /video/upload", () => {
 });
 
 describe("POST /video/merge", () => {
+  it("should upload a video file and return 201", async function () {
+    this.timeout(10000);
+    const res = await supertest(app)
+      .post("/video/upload")
+      .set("x-auth-token", process.env.STATIC_TOKEN)
+      .attach("file", path.join(__dirname, "./test-videos/sample-5s.mp4"));
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property("title", "sample-5s.mp4");
+  });
+
   it("should return 200 for merging videos", async function () {
     this.timeout(10000);
     const res = await supertest(app)
