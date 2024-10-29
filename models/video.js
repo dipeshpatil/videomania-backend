@@ -22,6 +22,14 @@ const Video = sequelize.define(
       type: DataTypes.INTEGER, // Duration in seconds
       allowNull: false,
     },
+    s3VideoKey: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    s3BucketName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     tableName: "videos", // Custom table name if necessary
