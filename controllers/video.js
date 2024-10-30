@@ -13,7 +13,7 @@ const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
 const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
-const BUCKET_NAME = process.env.S3_BUCKET_NAME;
+const BUCKET = process.env.S3_BUCKET_NAME;
 
 class VideoController {
   constructor() {}
@@ -50,7 +50,7 @@ class VideoController {
           const uploadResult = await uploadToS3(
             file.path,
             `${Date.now()}_${file.originalname}`,
-            BUCKET_NAME,
+            BUCKET,
             file.mimetype
           );
 
@@ -61,7 +61,7 @@ class VideoController {
             size,
             duration,
             s3VideoKey: uploadResult.Key,
-            s3BucketName: uploadResult.Bucket,
+            s3BucketName: BUCKET,
           });
 
           res.status(201).json(video);
@@ -109,7 +109,6 @@ class VideoController {
         return res.status(404).json({ error: "Video not found" });
       }
 
-      const bucket = process.env.S3_BUCKET_NAME;
       const inputKey = video.s3VideoKey; // S3 key of the original video
       const tempDownloadPath = path.join(
         "/tmp",
@@ -120,7 +119,7 @@ class VideoController {
       const trimmedKey = `trims/${trimmedFileName}`;
 
       console.log("Downloading video from S3...");
-      await downloadFromS3(bucket, inputKey, tempDownloadPath);
+      await downloadFromS3(video.s3BucketName, inputKey, tempDownloadPath);
 
       console.log("Trimming the video...");
       await new Promise((resolve, reject) => {
@@ -138,7 +137,7 @@ class VideoController {
       const uploadResult = await uploadToS3(
         tempTrimmedPath,
         trimmedKey,
-        bucket,
+        BUCKET,
         "video/mp4"
       );
 
@@ -148,7 +147,7 @@ class VideoController {
         filePath: uploadResult.Location,
         size: fs.statSync(tempTrimmedPath).size,
         duration: endTime - startTime,
-        s3BucketName: bucket,
+        s3BucketName: BUCKET,
         s3VideoKey: trimmedKey,
       });
 
@@ -175,8 +174,6 @@ class VideoController {
 
       if (videos.length !== videoIds.length)
         return res.status(404).json({ error: "One or more videos not found" });
-
-      const bucket = process.env.S3_BUCKET_NAME;
 
       const s3DownloadPromises = videos.map((video, index) => {
         const tempPath = path.join("/tmp", `video_${index}_${Date.now()}.mp4`);
@@ -217,7 +214,7 @@ class VideoController {
           const uploadResult = await uploadToS3(
             tempOutputPath,
             uploadKey,
-            bucket,
+            BUCKET,
             "video/mp4"
           );
 
@@ -227,7 +224,7 @@ class VideoController {
             filePath: uploadResult.Location,
             size: fs.statSync(tempOutputPath).size,
             duration,
-            s3BucketName: bucket,
+            s3BucketName: BUCKET,
             s3VideoKey: uploadKey,
           });
 
