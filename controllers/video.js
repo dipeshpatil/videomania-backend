@@ -10,8 +10,10 @@ const ShareableLink = require("../models/share-link");
 
 const { hypheniseFileName, getUniqueElements } = require("../utils/common");
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
+const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
+const BUCKET = process.env.S3_BUCKET_NAME;
 
 class VideoController {
   constructor() {}
@@ -40,18 +42,38 @@ class VideoController {
           duration < constants.ffmpeg.minDuration ||
           duration > constants.ffmpeg.maxDuration
         ) {
-          fs.unlinkSync(path); // delete file if invalid duration
+          fs.unlinkSync(path); // Delete the file if invalid duration
           return res.status(400).json({ error: "Invalid video duration" });
         }
 
-        await Video.create({
-          title: originalname,
-          filePath: path,
-          size,
-          duration,
-        })
-          .then((video) => res.status(201).json(video))
-          .catch((error) => res.status(500).json({ error }));
+        try {
+          const uploadResult = await uploadToS3(
+            file.path,
+            `uploads/${Date.now()}_${file.originalname}`,
+            BUCKET,
+            file.mimetype
+          );
+
+          // Save video information in the database with S3 URL
+          const video = await Video.create({
+            title: originalname,
+            filePath: uploadResult.Location, // S3 file URL
+            size,
+            duration,
+            s3VideoKey: uploadResult.Key,
+            s3BucketName: BUCKET,
+          });
+
+          res.status(201).json(video);
+        } catch (uploadError) {
+          console.log(uploadError);
+
+          res
+            .status(500)
+            .json({ error: "Failed to upload to S3", msg: uploadError });
+        } finally {
+          fs.unlinkSync(path); // Clean up local file
+        }
       });
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -87,32 +109,54 @@ class VideoController {
         return res.status(404).json({ error: "Video not found" });
       }
 
-      const inputPath = video.filePath;
-      const outputFilename = `trimmed-${Date.now()}-${hypheniseFileName(
-        video.title
-      )}`;
-      const outputPath = path.join("uploads", outputFilename);
+      const inputKey = video.s3VideoKey; // S3 key of the original video
+      const tempDownloadPath = path.join(
+        "/tmp",
+        `downloaded_${Date.now()}.mp4`
+      );
+      const tempTrimmedPath = path.join("/tmp", `trimmed_${Date.now()}.mp4`);
+      const trimmedFileName = `trimmed_${Date.now()}_${video.title}`;
+      const trimmedKey = `trims/${trimmedFileName}`;
 
-      ffmpeg(inputPath)
-        .setStartTime(startTime) // Set the start time for trimming
-        .setDuration(endTime - startTime) // Set the duration for trimming
-        .output(outputPath) // Output the trimmed video
-        .on("end", async (video) => {
-          // Optionally save the trimmed video metadata (if you want to track it)
-          await Video.create({
-            title: outputFilename,
-            filePath: outputPath,
-            size: fs.statSync(outputPath).size,
-            duration: endTime - startTime,
-          })
-            .then((video) => res.status(200).json(video))
-            .catch((error) => res.status(500).json({ error }));
-        })
-        .on("error", (err) => {
-          console.error("Error trimming video:", err);
-          res.status(500).json({ error: "Failed to trim video" });
-        })
-        .run();
+      console.log("Downloading video from S3...");
+      await downloadFromS3(video.s3BucketName, inputKey, tempDownloadPath);
+
+      console.log("Trimming the video...");
+      await new Promise((resolve, reject) => {
+        ffmpeg(tempDownloadPath)
+          .setStartTime(startTime)
+          .setDuration(endTime - startTime)
+          .output(tempTrimmedPath)
+          .on("end", resolve)
+          .on("error", reject)
+          .run();
+      });
+
+      // Step 3: Upload trimmed video back to S3
+      console.log("Uploading trimmed video to S3...");
+      const uploadResult = await uploadToS3(
+        tempTrimmedPath,
+        trimmedKey,
+        BUCKET,
+        "video/mp4"
+      );
+
+      // Step 4: Save metadata of trimmed video (optional)
+      const newVideo = await Video.create({
+        title: trimmedFileName,
+        filePath: uploadResult.Location,
+        size: fs.statSync(tempTrimmedPath).size,
+        duration: endTime - startTime,
+        s3BucketName: BUCKET,
+        s3VideoKey: trimmedKey,
+      });
+
+      // Step 5: Clean up temporary files
+      fs.unlinkSync(tempDownloadPath);
+      fs.unlinkSync(tempTrimmedPath);
+
+      // Respond with the trimmed video metadata
+      res.status(200).json(newVideo);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -126,52 +170,77 @@ class VideoController {
       }
 
       const { videoIds } = req.body;
-
       const videos = await Video.findAll({ where: { id: videoIds } });
+
       if (videos.length !== videoIds.length)
         return res.status(404).json({ error: "One or more videos not found" });
 
-      const ffmpegCommand = ffmpeg();
+      const s3DownloadPromises = videos.map((video, index) => {
+        const tempPath = path.join("/tmp", `video_${index}_${Date.now()}.mp4`);
+        return downloadFromS3(video.s3BucketName, video.s3VideoKey, tempPath);
+      });
 
-      const outputFilename = `merged-${Date.now()}.mp4`;
-      const outputPath = path.join("uploads", outputFilename);
+      const tempPaths = await Promise.all(s3DownloadPromises);
 
       const dimensions = await Promise.all(
-        videos.map(async (v) => {
-          const { width, height } = await getVideoDimensions(v.filePath);
-          return `w${width}:h${height}`;
+        tempPaths.map(async (filePath) => {
+          const { width, height } = await getVideoDimensions(filePath);
+          return `${width}x${height}`;
         })
       );
 
-      if (getUniqueElements(dimensions).length > 1) {
+      if (new Set(dimensions).size > 1) {
+        tempPaths.forEach((p) => fs.unlinkSync(p)); // Cleanup temp files
         return res
           .status(400)
           .json({ error: "Cannot merge videos with different dimensions" });
       }
 
-      videos.forEach((video) => ffmpegCommand.input(video.filePath));
+      // Merge videos using ffmpeg
+      const outputFilename = `merged-${Date.now()}.mp4`;
+      const tempOutputPath = path.join("/tmp", outputFilename);
+
+      const ffmpegCommand = ffmpeg();
+      tempPaths.forEach((filePath) => ffmpegCommand.input(filePath));
 
       ffmpegCommand
         .on("end", async () => {
-          const duration = await getVideoDuration(outputPath);
+          console.log("Merging completed.");
 
-          await Video.create({
+          // Get duration and upload the merged video to S3
+          const duration = await getVideoDuration(tempOutputPath);
+          const uploadKey = `merges/${outputFilename}`;
+
+          const uploadResult = await uploadToS3(
+            tempOutputPath,
+            uploadKey,
+            BUCKET,
+            "video/mp4"
+          );
+
+          // Save merged video metadata to DB
+          const newVideo = await Video.create({
             title: outputFilename,
-            filePath: outputPath,
-            size: fs.statSync(outputPath).size,
+            filePath: uploadResult.Location,
+            size: fs.statSync(tempOutputPath).size,
             duration,
-          })
-            .then((video) => res.status(200).json(video))
-            .catch((error) => res.status(500).json({ error }));
+            s3BucketName: BUCKET,
+            s3VideoKey: uploadKey,
+          });
+
+          // Cleanup temp files
+          tempPaths.forEach((p) => fs.unlinkSync(p));
+          fs.unlinkSync(tempOutputPath);
+
+          res.status(200).json(newVideo);
         })
-        .on("error", (err) =>
-          res
-            .status(500)
-            .json({ error: "Error merging videos", err: err.stack })
-        )
-        .mergeToFile(outputPath);
+        .on("error", (err) => {
+          console.error("Error merging videos:", err);
+          res.status(500).json({ error: "Error merging videos" });
+        })
+        .mergeToFile(tempOutputPath);
     } catch (error) {
-      return res.status(500).json({ error: error.stack });
+      return res.status(500).json({ error });
     }
   }
 
@@ -243,10 +312,16 @@ class VideoController {
         return res.status(404).json({ error: "Video not found" });
       }
 
+      const inputKey = video.s3VideoKey;
+      const tempDownloadPath = path.join(
+        "/tmp",
+        `downloaded_${Date.now()}.mp4`
+      );
+      console.log("Downloading video from S3...");
+      await downloadFromS3(video.s3BucketName, inputKey, tempDownloadPath);
+
       // Send the video file
-      res.sendFile(
-        path.join(path.dirname(require.main.filename), video.filePath)
-      ); // Ensure the video file path is correct
+      res.sendFile(tempDownloadPath); // Ensure the video file path is correct
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
