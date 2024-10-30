@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-const { db } = require(`../secrets/${process.env.APP_ENV}.json`);
+const { dbConfig } = require("./secrets");
 
 const connectDatabase = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://${db.username}:${db.password}@${db.host}/${db.databaseName}?retryWrites=true&w=majority&appName=${db.appName}`
+      `mongodb+srv://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}/${dbConfig.databaseName}?retryWrites=true&w=majority&appName=${dbConfig.appName}`
     );
     console.log("Mongo DB Connected");
   } catch (err) {
