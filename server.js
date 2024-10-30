@@ -11,6 +11,8 @@ const app = express();
 
 const { cleanUpExpiredLinks } = require("./utils/common");
 
+console.log(process.env.APP_ENV);
+
 // MongoDB Connection
 connectDatabase();
 
