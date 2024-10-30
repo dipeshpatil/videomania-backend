@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const constants = require("../config/constants.json");
+const { s3Config } = require("../config/secrets");
 const { Video } = require("../models/video");
 const { ShareableLink } = require("../models/share-link");
 
@@ -13,7 +14,7 @@ const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
 const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
-const BUCKET = process.env.S3_BUCKET_NAME;
+const BUCKET = s3Config.s3BucketName;
 
 class VideoController {
   constructor() {}
@@ -307,8 +308,6 @@ class VideoController {
       }
 
       // Find the video associated with the link
-      console.log(shareableLink.videoId);
-
       const video = await Video.findById(shareableLink.videoId);
       if (!video) {
         return res.status(404).json({ error: "Video not found" });

@@ -1,10 +1,12 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 
+const { s3Config } = require("../config/secrets");
+
 const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION, // e.g., 'us-east-1'
+  accessKeyId: s3Config.awsAccessKey,
+  secretAccessKey: s3Config.awsSecretAccessKey,
+  region: s3Config.awsRegion,
 });
 
 async function uploadToS3(filePath, key, bucket, mimeType) {

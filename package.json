@@ -6,7 +6,9 @@
   "scripts": {
     "test": "mocha tests/**/*.test.js",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "encrypt:config": "TYPE=encrypt node crypt.js",
+    "decrypt:config": "TYPE=decrypt node crypt.js"
   },
   "keywords": [],
   "author": "",
