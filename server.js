@@ -4,22 +4,15 @@ const fs = require("fs");
 const express = require("express");
 const path = require("path");
 
-const sequelize = require("./config/database");
+const connectDatabase = require("./config/database");
 const constants = require("./config/constants.json");
 
 const app = express();
 
 const { cleanUpExpiredLinks } = require("./utils/common");
 
-// Init DB Connection
-sequelize
-  .sync({ force: false }) // force: false prevents dropping tables, set to true for dev
-  .then(() => {
-    console.log("Database synced successfully.");
-  })
-  .catch((err) => {
-    console.error("Error syncing database:", err);
-  });
+// MongoDB Connection
+connectDatabase();
 
 // Importing Video Route
 const videoRoute = require("./routes/video");

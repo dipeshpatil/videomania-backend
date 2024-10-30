@@ -1,12 +1,20 @@
-const { Sequelize } = require("sequelize");
+const mongoose = require("mongoose");
 
-const constants = require("../config/constants.json");
+const { db } = require("../secrets/development.json");
 
-// Create a new Sequelize instance for SQLite
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: `./${constants.db.fileName}`, // Path to the SQLite file
-  logging: false, // Set to true if you want SQL queries logged
-});
+const connectDatabase = async () => {
+  try {
+    await mongoose.connect(
+      `mongodb+srv://${db.username}:${db.password}@${db.host}/${db.databaseName}?retryWrites=true&w=majority&appName=${db.appName}`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+    console.log("Mongo DB Connected");
+  } catch (err) {
+    console.log(err.message);
+  }
+};
 
-module.exports = sequelize;
+module.exports = connectDatabase;
