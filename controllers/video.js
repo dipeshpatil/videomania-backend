@@ -49,7 +49,7 @@ class VideoController {
         try {
           const uploadResult = await uploadToS3(
             file.path,
-            `${Date.now()}_${file.originalname}`,
+            `uploads/${Date.now()}_${file.originalname}`,
             BUCKET,
             file.mimetype
           );

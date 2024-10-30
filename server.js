@@ -26,6 +26,16 @@ const videoRoute = require("./routes/video");
 
 app.use(express.json({ extended: false }));
 
+// Creating uploads/ folder to store output videos
+if (!fs.existsSync(constants.app.outputDirectory)) {
+  fs.mkdirSync(constants.app.outputDirectory);
+}
+
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, constants.app.outputDirectory))
+);
+
 // Registering URL Route
 app.use("/video", videoRoute);
 
