@@ -1,40 +1,39 @@
-// models/video.js
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database"); // Import the sequelize instance
+const mongoose = require("mongoose");
 
-// Define the Video model
-const Video = sequelize.define(
-  "Video",
+const videoSchema = new mongoose.Schema(
   {
     title: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     filePath: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     size: {
-      type: DataTypes.INTEGER, // Size in bytes
-      allowNull: false,
+      type: Number, // Size in bytes
+      required: true,
     },
     duration: {
-      type: DataTypes.INTEGER, // Duration in seconds
-      allowNull: false,
+      type: Number, // Duration in seconds
+      required: true,
     },
     s3VideoKey: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     s3BucketName: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
-  {
-    tableName: "videos", // Custom table name if necessary
-    timestamps: true, // Add createdAt and updatedAt fields
-  }
+  { collection: "videos" }
 );
 
-module.exports = Video;
+module.exports = {
+  Video: mongoose.model("videos", videoSchema),
+};

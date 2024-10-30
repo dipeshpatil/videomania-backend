@@ -1,5 +1,4 @@
-const { Op, Sequelize } = require("sequelize");
-const ShareableLink = require("../models/share-link");
+const { ShareableLink } = require("../models/share-link");
 
 function hypheniseFileName(fileName) {
   return fileName.toLowerCase().replace(/\s+/g, "-");
@@ -11,14 +10,10 @@ function getUniqueElements(arr) {
 
 async function cleanUpExpiredLinks() {
   try {
-    const deletedRowsCount = await ShareableLink.destroy({
-      where: {
-        expiryTime: {
-          [Op.lt]: Sequelize.literal("CURRENT_TIMESTAMP"),
-        },
-      },
+    const result = await ShareableLink.deleteMany({
+      expiryTime: { $lt: new Date() },
     });
-    console.log(`Number of expired links deleted: ${deletedRowsCount}`);
+    console.log(`Number of expired links deleted: ${result.deletedCount}`);
   } catch (error) {
     console.log("Error deleting expired rows:", error);
   }

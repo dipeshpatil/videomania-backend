@@ -4,7 +4,6 @@
 
 1. Node.js - v16 [Download](https://nodejs.org/en/download/package-manager)
 2. FFMPEG Binary Installed - v7.1 [Download](https://www.ffmpeg.org/download.html)
-3. SQLite - v3.46.1 [Download](https://www.sqlite.org/download.html)
 
 ## Installation Steps
 

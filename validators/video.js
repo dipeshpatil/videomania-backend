@@ -2,7 +2,7 @@ const { body, param } = require("express-validator");
 
 module.exports = {
   basicVideoTrimValidator: [
-    param("videoId").isInt().withMessage("videoId must be an integer"),
+    param("videoId").not().isEmpty().withMessage("videoId must not be empty"),
     body("start", "Start Time is required").not().isEmpty(),
     body("end", "End Time is required").not().isEmpty(),
   ],
@@ -13,10 +13,9 @@ module.exports = {
       .withMessage(
         "videoIds must be a non-empty array with minimum 2 videoIds"
       ),
-    body("videoIds.*").isInt().withMessage("Each videoId must be an integer"),
   ],
 
   basicShareValidator: [
-    param("videoId").isInt().withMessage("videoId must be an integer"),
+    param("videoId").not().isEmpty().withMessage("videoId must be valid"),
   ],
 };

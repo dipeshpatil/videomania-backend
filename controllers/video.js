@@ -5,8 +5,8 @@ const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const constants = require("../config/constants.json");
-const Video = require("../models/video");
-const ShareableLink = require("../models/share-link");
+const { Video } = require("../models/video");
+const { ShareableLink } = require("../models/share-link");
 
 const { hypheniseFileName, getUniqueElements } = require("../utils/common");
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
@@ -104,7 +104,7 @@ class VideoController {
 
     try {
       // Check if the video exists
-      const video = await Video.findByPk(videoId);
+      const video = await Video.findById(videoId);
       if (!video) {
         return res.status(404).json({ error: "Video not found" });
       }
@@ -170,7 +170,7 @@ class VideoController {
       }
 
       const { videoIds } = req.body;
-      const videos = await Video.findAll({ where: { id: videoIds } });
+      const videos = await Video.find({ _id: { $in: videoIds } });
 
       if (videos.length !== videoIds.length)
         return res.status(404).json({ error: "One or more videos not found" });
@@ -255,7 +255,7 @@ class VideoController {
       const { expiryDuration } = req.body; // Expiry time in minutes
 
       // Check if the video exists
-      const video = await Video.findByPk(videoId);
+      const video = await Video.findById(videoId);
       if (!video) {
         return res.status(404).json({ error: "Video not found" });
       }
@@ -296,7 +296,7 @@ class VideoController {
       const { link } = req.params;
 
       // Find the shareable link in the database
-      const shareableLink = await ShareableLink.findOne({ where: { link } });
+      const shareableLink = await ShareableLink.findOne({ link });
       if (!shareableLink) {
         return res.status(404).json({ error: "Invalid or expired link" });
       }
@@ -307,7 +307,9 @@ class VideoController {
       }
 
       // Find the video associated with the link
-      const video = await Video.findByPk(shareableLink.videoId);
+      console.log(shareableLink.videoId);
+
+      const video = await Video.findById(shareableLink.videoId);
       if (!video) {
         return res.status(404).json({ error: "Video not found" });
       }
@@ -329,7 +331,7 @@ class VideoController {
 
   async getAllVideos(req, res) {
     try {
-      const videos = await Video.findAll();
+      const videos = await Video.find({});
       res.status(200).json(videos);
     } catch (err) {
       res.status(500).json({ error: "Error fetching videos" });
@@ -338,7 +340,7 @@ class VideoController {
 
   async getAllLinks(req, res) {
     try {
-      const links = await ShareableLink.findAll();
+      const links = await ShareableLink.find({});
       res.status(200).json(links);
     } catch (err) {
       res.status(500).json({ error: "Error fetching links" });

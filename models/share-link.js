@@ -1,24 +1,24 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
+const mongoose = require("mongoose");
 
-const ShareableLink = sequelize.define("ShareableLink", {
-  videoId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "Videos",
-      key: "id",
+const shareLinkSchema = new mongoose.Schema(
+  {
+    videoId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "videos",
+    },
+    link: {
+      type: String,
+      required: true,
+    },
+    expiryTime: {
+      type: Date,
+      required: true,
     },
   },
-  link: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  expiryTime: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-});
+  { collection: "share-links" }
+);
 
-module.exports = ShareableLink;
+module.exports = {
+  ShareableLink: mongoose.model("share-links", shareLinkSchema),
+};
