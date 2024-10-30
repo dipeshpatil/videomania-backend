@@ -247,63 +247,6 @@ class VideoController {
     }
   }
 
-  async mergeVideos1(req, res) {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const { videoIds } = req.body;
-
-      const videos = await Video.findAll({ where: { id: videoIds } });
-      if (videos.length !== videoIds.length)
-        return res.status(404).json({ error: "One or more videos not found" });
-
-      const ffmpegCommand = ffmpeg();
-
-      const outputFilename = `merged-${Date.now()}.mp4`;
-      const outputPath = path.join("uploads", outputFilename);
-
-      const dimensions = await Promise.all(
-        videos.map(async (v) => {
-          const { width, height } = await getVideoDimensions(v.filePath);
-          return `w${width}:h${height}`;
-        })
-      );
-
-      if (getUniqueElements(dimensions).length > 1) {
-        return res
-          .status(400)
-          .json({ error: "Cannot merge videos with different dimensions" });
-      }
-
-      videos.forEach((video) => ffmpegCommand.input(video.filePath));
-
-      ffmpegCommand
-        .on("end", async () => {
-          const duration = await getVideoDuration(outputPath);
-
-          await Video.create({
-            title: outputFilename,
-            filePath: outputPath,
-            size: fs.statSync(outputPath).size,
-            duration,
-          })
-            .then((video) => res.status(200).json(video))
-            .catch((error) => res.status(500).json({ error }));
-        })
-        .on("error", (err) =>
-          res
-            .status(500)
-            .json({ error: "Error merging videos", err: err.stack })
-        )
-        .mergeToFile(outputPath);
-    } catch (error) {
-      return res.status(500).json({ error: error.stack });
-    }
-  }
-
   async generateShareLink(req, res) {
     try {
       const errors = validationResult(req);
