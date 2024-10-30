@@ -26,9 +26,15 @@ async function downloadFromS3(bucket, key, downloadPath) {
   return new Promise((resolve, reject) => {
     s3.getObject(params)
       .createReadStream()
-      .on("error", reject)
-      .pipe(file)
-      .on("finish", resolve);
+      .on("error", (err) => {
+        console.error(`Error downloading ${key}:`, err);
+        reject(err); // Ensure the promise rejects on error
+      })
+      .on("end", () => {
+        console.log(`Downloaded ${key} to ${downloadPath}`);
+        resolve(downloadPath); // Resolve the path correctly
+      })
+      .pipe(file);
   });
 }
 
