@@ -1,3 +1,5 @@
+const { ADMIN } = require("../permissions/user");
+
 const authorizePermission = (requiredPermission) => {
   return async (req, res, next) => {
     if (!requiredPermission) {
@@ -8,7 +10,7 @@ const authorizePermission = (requiredPermission) => {
 
     const userRole = req.user.role;
     // Bypass For Admin
-    if (userRole === "admin") next();
+    if (userRole === ADMIN) next();
     else {
       const userPermissions = req.user.permissions;
 

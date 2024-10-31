@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const { appConfig } = require("../config/secrets");
 
+const { ADMIN } = require("../permissions/user");
 const User = require("../models/user");
 
 const authenticateToken = async (req, res, next) => {
@@ -24,7 +25,7 @@ const authoriseRole = (role) => {
     const userRole = req.user.role;
 
     // Bypass For Admin
-    if (userRole === "admin") next();
+    if (userRole === ADMIN) next();
     else {
       try {
         if (req.user.role === role) next();
