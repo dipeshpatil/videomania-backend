@@ -1,5 +1,3 @@
-const User = require("../models/user");
-
 const authorizePermission = (requiredPermission) => {
   return async (req, res, next) => {
     if (!requiredPermission) {
@@ -7,15 +5,20 @@ const authorizePermission = (requiredPermission) => {
         .status(400)
         .json({ message: "Access Denied -- No Permission Specified!" });
     }
-    const user = await User.findById(req.user.id);
-    const userPermissions = user.permissions;
 
-    if (userPermissions.includes(requiredPermission)) {
-      next();
-    } else {
-      res.status(403).json({
-        message: `Access Denied -- Insufficient Permissions: ${requiredPermission}`,
-      });
+    const userRole = req.user.role;
+    // Bypass For Admin
+    if (userRole === "admin") next();
+    else {
+      const userPermissions = req.user.permissions;
+
+      if (userPermissions.includes(requiredPermission)) {
+        next();
+      } else {
+        res.status(403).json({
+          message: `Access Denied -- Insufficient Permissions: ${requiredPermission}`,
+        });
+      }
     }
   };
 };

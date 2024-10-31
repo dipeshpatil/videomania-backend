@@ -1,10 +1,14 @@
-const { check } = require("express-validator");
+const { body } = require("express-validator");
 
 module.exports = {
-  // Checks if email and password fields are defined and returns Boolean Array
   basicPermissionsRequiredValidator: [
-    body("permissions")
-      .isArray()
-      .withMessage("permissions must be a non-empty array"),
+    body("permission")
+      .not()
+      .isEmpty()
+      .withMessage("permissions must not be empty"),
+  ],
+
+  basicRoleRequiredValidator: [
+    body("role").not().isEmpty().withMessage("role must not be empty"),
   ],
 };
