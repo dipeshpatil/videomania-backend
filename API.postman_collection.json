@@ -1,218 +1,436 @@
 {
 	"info": {
 		"_postman_id": "b2c1a1df-17c4-4433-8628-5b8a35bbd2c4",
-		"name": "VideoVerse Assignment API",
+		"name": "Video API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "23539036"
 	},
 	"item": [
 		{
-			"name": "Upload Video",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"value": "static-token",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"type": "file",
-							"src": "/Users/dipeshpatil/Downloads/That's What She Said Speech.mp4"
+			"name": "Video",
+			"item": [
+				{
+					"name": "Upload Video",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/dipeshpatil/Downloads/file_example_MP4_480_1_5MG.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/video/upload",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"upload"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{local}}/video/upload",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"upload"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Generate Share Link",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"value": "static-token",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"expiryDuration\": 10\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Generate Share Link",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"expiryDuration\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/video/share/6723e9d9ed36aac69d745f9c",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"share",
+								"6723e9d9ed36aac69d745f9c"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{local}}/video/share/3",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"share",
-						"3"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Share Video Link",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"value": "static-token",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{local}}/video/share/f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"share",
-						"f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Trim Video",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"value": "static-token",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"start\": 3,\n    \"end\": 10\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Share Video Link",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/video/share/f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"share",
+								"f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{local}}/video/trim/1",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"trim",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Merge Videos",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"value": "static-token",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"videoIds\": [\n        1,\n        2\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Trim Video",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"start\": 1,\n    \"end\": 11\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/video/trim/6722bcce688da41edab860f9",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"trim",
+								"6722bcce688da41edab860f9"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{local}}/video/merge",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"merge"
-					]
+				{
+					"name": "Merge Videos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "static-token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"videoIds\": [\n        \"6722ac450e80c5967503fe68\",\n        \"6722afde0baf81e0393fe43d\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/video/merge",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"merge"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Videos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/video/all",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Video Links",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/video/all-links?token=static-token",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"video",
+								"all-links"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "static-token"
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "List All Videos",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{local}}/video/all?token=static-token",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"all"
-					],
-					"query": [
-						{
-							"key": "token",
-							"value": "static-token"
+			"name": "User",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Dipesh Patil\",\n    \"email\": \"d7pesh@gmail.com\",\n    \"password\": \"123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/auth/register",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "List All Video Links",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{local}}/video/all-links?token=static-token",
-					"host": [
-						"{{local}}"
-					],
-					"path": [
-						"video",
-						"all-links"
-					],
-					"query": [
-						{
-							"key": "token",
-							"value": "static-token"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"d7pesh@gmail.com\",\n    \"password\": \"123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/auth/login",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "Get Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user/permission/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"permission",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Permissions Copy",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get Permissions Copy",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update Permission",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"permission\": \"trim\",\n    \"operation\": \"remove\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/user/permission/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"permission",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Permission Copy",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/user/role/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"role",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user/role/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"role",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
