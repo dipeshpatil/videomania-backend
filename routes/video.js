@@ -6,6 +6,9 @@ const { MulterUtil } = require("../utils/multer");
 const VideoController = require("../controllers/video");
 
 const { authenticateToken } = require("../middlewares/auth");
+const { authorizePermission } = require("../middlewares/video");
+
+const { UPLOAD, MERGE, SHARE, TRIM } = require("../permissions/video");
 
 const {
   basicVideoTrimValidator,
@@ -23,7 +26,11 @@ const videoController = new VideoController();
  */
 router.post(
   "/upload",
-  [authenticateToken, MulterUtil.upload.single("file")],
+  [
+    authenticateToken,
+    authorizePermission(UPLOAD),
+    MulterUtil.upload.single("file"),
+  ],
   videoController.uploadVideo
 );
 
@@ -35,7 +42,7 @@ router.post(
  */
 router.post(
   "/trim/:videoId",
-  [authenticateToken, basicVideoTrimValidator],
+  [authenticateToken, authorizePermission(TRIM), basicVideoTrimValidator],
   videoController.trimVideo
 );
 
@@ -47,7 +54,7 @@ router.post(
  */
 router.post(
   "/merge",
-  [authenticateToken, basicMergeValidator],
+  [authenticateToken, authorizePermission(MERGE), basicMergeValidator],
   videoController.mergeVideos
 );
 
@@ -59,7 +66,7 @@ router.post(
  */
 router.post(
   "/share/:videoId",
-  [authenticateToken, basicShareValidator],
+  [authenticateToken, authorizePermission(SHARE), basicShareValidator],
   videoController.generateShareLink
 );
 
@@ -69,7 +76,11 @@ router.post(
  * @access  Private (requires static API token)
  * @body    None
  */
-router.get("/share/:link", [authenticateToken], videoController.shareVideoLink);
+router.get(
+  "/share/:link",
+  [authenticateToken, authorizePermission(SHARE)],
+  videoController.shareVideoLink
+);
 
 // debug routes to see data in database
 router.get("/all", [authenticateToken], videoController.getAllVideos);

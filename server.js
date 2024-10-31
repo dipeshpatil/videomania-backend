@@ -16,6 +16,8 @@ connectDatabase();
 
 // Importing Video Route
 const videoRoute = require("./routes/video");
+// Importing Auth Route
+const authRoute = require("./routes/auth");
 
 app.use(express.json({ extended: false }));
 
@@ -31,6 +33,7 @@ app.use(
 
 // Registering URL Route
 app.use("/video", videoRoute);
+app.use("/auth", authRoute);
 
 setInterval(async () => {
   await cleanUpExpiredLinks();

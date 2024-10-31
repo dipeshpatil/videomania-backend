@@ -10,9 +10,5 @@
     "outputDirectory": "uploads",
     "allowedFileExtensions": [".mp4"],
     "expiredLinkFrequencyMinutes": 60
-  },
-
-  "db": {
-    "fileName": "database.sqlite"
   }
 }
