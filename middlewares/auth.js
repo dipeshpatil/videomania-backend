@@ -12,11 +12,15 @@ const authenticateToken = async (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, appConfig.jwtSecret);
-    const userId = decoded.user.id;
-    req.user = await User.findById(userId).select("-password");
-    next();
+    const user = await User.findById(decoded.user.id).select("-password");
+    if (user) {
+      req.user = user;
+      next();
+    } else {
+      return res.status(401).json({ message: `Invalid Token! JWT Malformed` });
+    }
   } catch (err) {
-    res.status(403).json({ message: `Invalid Token! ${err.message}` });
+    res.status(401).json({ message: `Invalid Token! ${err.message}` });
   }
 };
 
