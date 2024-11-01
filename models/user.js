@@ -27,6 +27,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
+    plan: {
+      type: String,
+      default: "free",
+    },
+    credits: {
+      type: Number,
+      default: 100,
+    },
   },
   { collection: "users" }
 );

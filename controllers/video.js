@@ -7,7 +7,9 @@ const { validationResult } = require("express-validator");
 const constants = require("../config/constants.json");
 const { s3Config } = require("../config/secrets");
 const { Video } = require("../models/video");
+const User = require("../models/user");
 const { ShareableLink } = require("../models/share-link");
+const { planCredits } = require("../permissions/video");
 
 const { hypheniseFileName, getUniqueElements } = require("../utils/common");
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
@@ -64,6 +66,12 @@ class VideoController {
             s3VideoKey: uploadResult.Key,
             s3BucketName: BUCKET,
           });
+
+          const remainingCredits = req.user.credits - planCredits.UPLOAD;
+          await User.updateOne(
+            { _id: req.user.id },
+            { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+          );
 
           res.status(201).json(video);
         } catch (uploadError) {
@@ -152,6 +160,12 @@ class VideoController {
         s3VideoKey: trimmedKey,
       });
 
+      const remainingCredits = req.user.credits - planCredits.TRIM;
+      await User.updateOne(
+        { _id: req.user.id },
+        { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+      );
+
       // Step 5: Clean up temporary files
       fs.unlinkSync(tempDownloadPath);
       fs.unlinkSync(tempTrimmedPath);
@@ -229,6 +243,12 @@ class VideoController {
             s3VideoKey: uploadKey,
           });
 
+          const remainingCredits = req.user.credits - planCredits.MERGE;
+          await User.updateOne(
+            { _id: req.user.id },
+            { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+          );
+
           // Cleanup temp files
           tempPaths.forEach((p) => fs.unlinkSync(p));
           fs.unlinkSync(tempOutputPath);
@@ -280,6 +300,12 @@ class VideoController {
       const shareableUrl = `${req.protocol}://${req.get("host")}/video/share/${
         shareableLink.link
       }?token=${process.env.STATIC_TOKEN}`;
+
+      const remainingCredits = req.user.credits - planCredits.SHARE;
+      await User.updateOne(
+        { _id: req.user.id },
+        { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+      );
 
       res.status(201).json({
         message: "Shareable link generated successfully",
