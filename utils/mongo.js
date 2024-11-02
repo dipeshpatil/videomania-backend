@@ -12,11 +12,22 @@ const logTransaction = async (userId, credits, action, description) => {
   await transaction.save();
 };
 
-const deductUserCredits = async (userId, userCredits, planCredits) => {
+const deductUserCredits = async (
+  userId,
+  userCredits,
+  planCredits,
+  transactionDesc
+) => {
   const remainingCredits = userCredits - planCredits;
   await User.updateOne(
     { _id: userId },
     { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+  );
+  await logTransaction(
+    userId,
+    planCredits,
+    transactionCreditAction.DEDUCT,
+    transactionDesc
   );
 };
 
@@ -31,7 +42,6 @@ const adjustUserCredits = async (userId, credits) => {
 };
 
 module.exports = {
-  logTransaction,
   deductUserCredits,
   adjustUserCredits,
 };

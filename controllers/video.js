@@ -13,7 +13,7 @@ const { transactionCreditAction } = require("../permissions/transaction");
 
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
 const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
-const { logTransaction, deductUserCredits } = require("../utils/mongo");
+const { deductUserCredits } = require("../utils/mongo");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
 const BUCKET = s3Config.s3BucketName;
@@ -70,13 +70,7 @@ class VideoController {
           await deductUserCredits(
             req.user.id,
             req.user.credits,
-            planCredits.UPLOAD
-          );
-
-          await logTransaction(
-            req.user.id,
             planCredits.UPLOAD,
-            transactionCreditAction.DEDUCT,
             videoPermissions.UPLOAD
           );
 
@@ -167,12 +161,10 @@ class VideoController {
         s3VideoKey: trimmedKey,
       });
 
-      await deductUserCredits(req.user.id, req.user.credits, planCredits.TRIM);
-
-      await logTransaction(
+      await deductUserCredits(
         req.user.id,
+        req.user.credits,
         planCredits.TRIM,
-        transactionCreditAction.DEDUCT,
         videoPermissions.TRIM
       );
 
@@ -256,13 +248,7 @@ class VideoController {
           await deductUserCredits(
             req.user.id,
             req.user.credits,
-            planCredits.MERGE
-          );
-
-          await logTransaction(
-            req.user.id,
             planCredits.MERGE,
-            transactionCreditAction.DEDUCT,
             videoPermissions.MERGE
           );
 
@@ -318,12 +304,10 @@ class VideoController {
         shareableLink.link
       }?token=${process.env.STATIC_TOKEN}`;
 
-      await deductUserCredits(req.user.id, req.user.credits, planCredits.SHARE);
-
-      await logTransaction(
+      await deductUserCredits(
         req.user.id,
+        req.user.credits,
         planCredits.SHARE,
-        transactionCreditAction.DEDUCT,
         videoPermissions.SHARE
       );
 
