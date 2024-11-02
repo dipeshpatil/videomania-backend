@@ -27,7 +27,6 @@ const authenticateToken = async (req, res, next) => {
 const authoriseRole = (role) => {
   return (req, res, next) => {
     const userRole = req.user.role;
-
     // Bypass For Admin
     if (userRole === ADMIN) next();
     else {

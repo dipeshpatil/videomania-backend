@@ -7,13 +7,13 @@ const { validationResult } = require("express-validator");
 const constants = require("../config/constants.json");
 const { s3Config } = require("../config/secrets");
 const { Video } = require("../models/video");
-const User = require("../models/user");
 const { ShareableLink } = require("../models/share-link");
-const { planCredits } = require("../permissions/video");
+const { planCredits, videoPermissions } = require("../permissions/video");
+const { transactionCreditAction } = require("../permissions/transaction");
 
-const { hypheniseFileName, getUniqueElements } = require("../utils/common");
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
 const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
+const { logTransaction, deductUserCredits } = require("../utils/mongo");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
 const BUCKET = s3Config.s3BucketName;
@@ -67,10 +67,17 @@ class VideoController {
             s3BucketName: BUCKET,
           });
 
-          const remainingCredits = req.user.credits - planCredits.UPLOAD;
-          await User.updateOne(
-            { _id: req.user.id },
-            { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+          await deductUserCredits(
+            req.user.id,
+            req.user.credits,
+            planCredits.UPLOAD
+          );
+
+          await logTransaction(
+            req.user.id,
+            planCredits.UPLOAD,
+            transactionCreditAction.DEDUCT,
+            videoPermissions.UPLOAD
           );
 
           res.status(201).json(video);
@@ -160,10 +167,13 @@ class VideoController {
         s3VideoKey: trimmedKey,
       });
 
-      const remainingCredits = req.user.credits - planCredits.TRIM;
-      await User.updateOne(
-        { _id: req.user.id },
-        { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+      await deductUserCredits(req.user.id, req.user.credits, planCredits.TRIM);
+
+      await logTransaction(
+        req.user.id,
+        planCredits.TRIM,
+        transactionCreditAction.DEDUCT,
+        videoPermissions.TRIM
       );
 
       // Step 5: Clean up temporary files
@@ -243,10 +253,17 @@ class VideoController {
             s3VideoKey: uploadKey,
           });
 
-          const remainingCredits = req.user.credits - planCredits.MERGE;
-          await User.updateOne(
-            { _id: req.user.id },
-            { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+          await deductUserCredits(
+            req.user.id,
+            req.user.credits,
+            planCredits.MERGE
+          );
+
+          await logTransaction(
+            req.user.id,
+            planCredits.MERGE,
+            transactionCreditAction.DEDUCT,
+            videoPermissions.MERGE
           );
 
           // Cleanup temp files
@@ -301,10 +318,13 @@ class VideoController {
         shareableLink.link
       }?token=${process.env.STATIC_TOKEN}`;
 
-      const remainingCredits = req.user.credits - planCredits.SHARE;
-      await User.updateOne(
-        { _id: req.user.id },
-        { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
+      await deductUserCredits(req.user.id, req.user.credits, planCredits.SHARE);
+
+      await logTransaction(
+        req.user.id,
+        planCredits.SHARE,
+        transactionCreditAction.DEDUCT,
+        videoPermissions.SHARE
       );
 
       res.status(201).json({

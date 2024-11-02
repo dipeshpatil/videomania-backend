@@ -4,4 +4,5 @@ module.exports = {
   dbConfig: secrets.db,
   s3Config: secrets.s3,
   appConfig: secrets.app,
+  creditConfig: secrets.credits,
 };
