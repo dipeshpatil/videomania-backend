@@ -8,10 +8,12 @@ const constants = require("../config/constants.json");
 const { s3Config } = require("../config/secrets");
 const { Video } = require("../models/video");
 const { ShareableLink } = require("../models/share-link");
+const { planCredits, videoPermissions } = require("../permissions/video");
+const { transactionCreditAction } = require("../permissions/transaction");
 
-const { hypheniseFileName, getUniqueElements } = require("../utils/common");
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
 const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
+const { deductUserCredits } = require("../utils/mongo");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
 const BUCKET = s3Config.s3BucketName;
@@ -64,6 +66,13 @@ class VideoController {
             s3VideoKey: uploadResult.Key,
             s3BucketName: BUCKET,
           });
+
+          await deductUserCredits(
+            req.user.id,
+            req.user.credits,
+            planCredits.UPLOAD,
+            videoPermissions.UPLOAD
+          );
 
           res.status(201).json(video);
         } catch (uploadError) {
@@ -152,6 +161,13 @@ class VideoController {
         s3VideoKey: trimmedKey,
       });
 
+      await deductUserCredits(
+        req.user.id,
+        req.user.credits,
+        planCredits.TRIM,
+        videoPermissions.TRIM
+      );
+
       // Step 5: Clean up temporary files
       fs.unlinkSync(tempDownloadPath);
       fs.unlinkSync(tempTrimmedPath);
@@ -229,6 +245,13 @@ class VideoController {
             s3VideoKey: uploadKey,
           });
 
+          await deductUserCredits(
+            req.user.id,
+            req.user.credits,
+            planCredits.MERGE,
+            videoPermissions.MERGE
+          );
+
           // Cleanup temp files
           tempPaths.forEach((p) => fs.unlinkSync(p));
           fs.unlinkSync(tempOutputPath);
@@ -280,6 +303,13 @@ class VideoController {
       const shareableUrl = `${req.protocol}://${req.get("host")}/video/share/${
         shareableLink.link
       }?token=${process.env.STATIC_TOKEN}`;
+
+      await deductUserCredits(
+        req.user.id,
+        req.user.credits,
+        planCredits.SHARE,
+        videoPermissions.SHARE
+      );
 
       res.status(201).json({
         message: "Shareable link generated successfully",

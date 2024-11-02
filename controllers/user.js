@@ -11,6 +11,7 @@ class UserController {
     const { userId } = req.params;
     try {
       const user = await User.findById(userId).select("-password");
+      if (!user) return res.status(404).json({ msg: "User not found!" });
       return res.status(200).json({ permissions: user.permissions });
     } catch (error) {
       console.error(err.message);
@@ -75,6 +76,7 @@ class UserController {
 
     try {
       const user = await User.findById(userId).select("-password");
+      if (!user) return res.status(404).json({ msg: "User not found!" });
       return res.status(200).json({ role: user.role });
     } catch (err) {
       console.error(err.message);

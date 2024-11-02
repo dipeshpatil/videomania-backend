@@ -20,6 +20,8 @@ const videoRoute = require("./routes/video");
 const authRoute = require("./routes/auth");
 // Importing User Route
 const userRoute = require("./routes/user");
+// Importing Transaction Route
+const transactionRoute = require("./routes/transaction");
 
 app.use(express.json({ extended: false }));
 
@@ -37,6 +39,7 @@ app.use(
 app.use("/video", videoRoute);
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
+app.use("/transaction", transactionRoute);
 
 setInterval(async () => {
   await cleanUpExpiredLinks();

@@ -6,9 +6,9 @@ const { MulterUtil } = require("../utils/multer");
 const VideoController = require("../controllers/video");
 
 const { authenticateToken, authoriseRole } = require("../middlewares/auth");
-const { authorizePermission } = require("../middlewares/video");
+const { authorizePermission, checkCredits } = require("../middlewares/video");
 
-const { UPLOAD, MERGE, SHARE, TRIM } = require("../permissions/video");
+const { videoPermissions, planCredits } = require("../permissions/video");
 const { USER, ADMIN } = require("../permissions/user");
 
 const {
@@ -30,7 +30,8 @@ router.post(
   [
     authenticateToken,
     authoriseRole(USER),
-    authorizePermission(UPLOAD),
+    authorizePermission(videoPermissions.UPLOAD),
+    checkCredits(planCredits.UPLOAD),
     MulterUtil.upload.single("file"),
   ],
   videoController.uploadVideo
@@ -47,7 +48,8 @@ router.post(
   [
     authenticateToken,
     authoriseRole(USER),
-    authorizePermission(TRIM),
+    authorizePermission(videoPermissions.TRIM),
+    checkCredits(planCredits.TRIM),
     basicVideoTrimValidator,
   ],
   videoController.trimVideo
@@ -64,7 +66,8 @@ router.post(
   [
     authenticateToken,
     authoriseRole(USER),
-    authorizePermission(MERGE),
+    authorizePermission(videoPermissions.MERGE),
+    checkCredits(planCredits.MERGE),
     basicMergeValidator,
   ],
   videoController.mergeVideos
@@ -81,7 +84,8 @@ router.post(
   [
     authenticateToken,
     authoriseRole(USER),
-    authorizePermission(SHARE),
+    authorizePermission(videoPermissions.SHARE),
+    checkCredits(planCredits.SHARE),
     basicShareValidator,
   ],
   videoController.generateShareLink
@@ -95,7 +99,12 @@ router.post(
  */
 router.get(
   "/share/:link",
-  [authenticateToken, authoriseRole(USER), authorizePermission(SHARE)],
+  [
+    authenticateToken,
+    authoriseRole(USER),
+    authorizePermission(videoPermissions.SHARE),
+    checkCredits(planCredits.SHARE),
+  ],
   videoController.shareVideoLink
 );
 
