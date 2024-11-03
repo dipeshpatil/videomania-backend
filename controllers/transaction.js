@@ -5,7 +5,7 @@ const {
   generateCreditToken,
   decodeCreditToken,
 } = require("../utils/transaction");
-const { adjustUserCredits } = require("../utils/mongo");
+const { adjustUserCredits, logBlacklistedToken } = require("../utils/mongo");
 
 class TransactionController {
   constructor() {}
@@ -43,6 +43,7 @@ class TransactionController {
       } = payload;
 
       await adjustUserCredits(userId, credits);
+      await logBlacklistedToken(userId, credits, token);
 
       return res.status(200).json({ msg: "Transaction Successful!" });
     } catch (error) {

@@ -1,4 +1,5 @@
 const Transaction = require("../models/transaction");
+const BlacklistedToken = require("../models/blacklisted-tokens");
 
 const { transactionCreditAction } = require("../permissions/transaction");
 
@@ -10,6 +11,11 @@ const logTransaction = async (userId, credits, action, description) => {
     description,
   });
   await transaction.save();
+};
+
+const logBlacklistedToken = async (userId, credits, token) => {
+  const blacklistedToken = new BlacklistedToken({ token, userId, credits });
+  await blacklistedToken.save();
 };
 
 const deductUserCredits = async (
@@ -44,4 +50,5 @@ const adjustUserCredits = async (userId, credits) => {
 module.exports = {
   deductUserCredits,
   adjustUserCredits,
+  logBlacklistedToken,
 };

@@ -9,7 +9,6 @@ const { s3Config } = require("../config/secrets");
 const { Video } = require("../models/video");
 const { ShareableLink } = require("../models/share-link");
 const { planCredits, videoPermissions } = require("../permissions/video");
-const { transactionCreditAction } = require("../permissions/transaction");
 
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
 const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");

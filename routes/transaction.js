@@ -10,6 +10,7 @@ const {
 } = require("../validators/transaction");
 
 const { authenticateToken, authoriseRole } = require("../middlewares/auth");
+const { checkBlacklistedToken } = require("../middlewares/token");
 const { USER } = require("../permissions/user");
 
 /**
@@ -36,7 +37,7 @@ router.post(
  */
 router.post(
   "/commit",
-  [authenticateToken, authoriseRole(USER)],
+  [authenticateToken, authoriseRole(USER), checkBlacklistedToken],
   transaction.commitTransaction
 );
 
