@@ -29,7 +29,7 @@ class AuthController {
           .json({ errors: [{ msg: "User already exists!" }] });
       }
 
-      const { permissions, credits } = planDetails[planEnum.FREE.toUpperCase()];
+      const { permissions, credits } = planDetails[planEnum.FREE];
       user = new User({
         name,
         email,
