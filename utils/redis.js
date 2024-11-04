@@ -13,9 +13,7 @@ const isTokenBlacklisted = async (token) => {
 const addToBlacklist = async (token, expiryTime) => {
   try {
     await redisClient.setEx(`blacklist:${token}`, expiryTime, "blacklisted");
-    console.log(
-      `Token blacklisted in Redis with expiry time of ${expiryTime} seconds.`
-    );
+    console.log(`Token blacklisted ExpiryTime: ${expiryTime} seconds.`);
   } catch (err) {
     console.error("Failed to add token to Redis blacklist:", err);
   }

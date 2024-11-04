@@ -44,7 +44,7 @@ class PlanPurchaseController {
 
     try {
       const { userId, planType } = req.body;
-      const token = await generatePlanToken(userId, planType);
+      const token = await generatePlanToken(userId, planType.toUpperCase());
       return res.json({
         msg: `Token valid for ${creditConfig.jwtOptions.expiresIn} seconds`,
         token,
