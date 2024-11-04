@@ -15,7 +15,7 @@ const blacklistedTokenSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    blacklistedAt: {
+    createdAt: {
       type: Date,
       default: Date.now, // Set the timestamp when the token is blacklisted
     },

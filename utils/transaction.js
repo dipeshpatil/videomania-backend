@@ -2,6 +2,18 @@ const jwt = require("jsonwebtoken");
 
 const { creditConfig } = require("../config/secrets");
 
+const signJWTToken = (payload, jwtSecret, jwtOptions) => {
+  return new Promise((resolve, reject) => {
+    jwt.sign(payload, jwtSecret, jwtOptions, (err, token) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(token);
+      }
+    });
+  });
+};
+
 const generateCreditToken = (userId, credits) => {
   const payload = {
     transaction: {
@@ -9,24 +21,20 @@ const generateCreditToken = (userId, credits) => {
       credits,
     },
   };
-
-  return new Promise((resolve, reject) => {
-    jwt.sign(
-      payload,
-      creditConfig.jwtSecret,
-      creditConfig.jwtOptions,
-      (err, token) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(token);
-        }
-      }
-    );
-  });
+  return signJWTToken(payload, creditConfig.jwtSecret, creditConfig.jwtOptions);
 };
 
-const decodeCreditToken = (token) => {
+const generatePlanToken = (userId, planType) => {
+  const payload = {
+    plan: {
+      userId,
+      planType,
+    },
+  };
+  return signJWTToken(payload, creditConfig.jwtSecret, creditConfig.jwtOptions);
+};
+
+const decodeJWTToken = (token) => {
   try {
     const decoded = jwt.verify(token, creditConfig.jwtSecret);
     return decoded;
@@ -38,5 +46,6 @@ const decodeCreditToken = (token) => {
 
 module.exports = {
   generateCreditToken,
-  decodeCreditToken,
+  generatePlanToken,
+  decodeJWTToken,
 };
