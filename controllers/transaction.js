@@ -6,6 +6,7 @@ const {
   decodeCreditToken,
 } = require("../utils/transaction");
 const { adjustUserCredits, logBlacklistedToken } = require("../utils/mongo");
+const { addToBlacklist } = require("../utils/redis");
 
 class TransactionController {
   constructor() {}
@@ -43,6 +44,7 @@ class TransactionController {
       } = payload;
 
       await adjustUserCredits(userId, credits);
+      await addToBlacklist(token, creditConfig.jwtOptions.expiresIn);
       await logBlacklistedToken(userId, credits, token);
 
       return res.status(200).json({ msg: "Transaction Successful!" });
