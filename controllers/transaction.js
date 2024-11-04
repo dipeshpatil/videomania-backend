@@ -1,10 +1,7 @@
 const { validationResult } = require("express-validator");
 
 const { creditConfig } = require("../config/secrets");
-const {
-  generateCreditToken,
-  decodeCreditToken,
-} = require("../utils/transaction");
+const { generateCreditToken, decodeJWTToken } = require("../utils/transaction");
 const { adjustUserCredits, logBlacklistedToken } = require("../utils/mongo");
 const { addToBlacklist } = require("../utils/redis");
 
@@ -33,7 +30,7 @@ class TransactionController {
   async commitTransaction(req, res) {
     try {
       const { token } = req.body;
-      const payload = decodeCreditToken(token);
+      const payload = decodeJWTToken(token);
       if (!payload)
         return res
           .status(400)

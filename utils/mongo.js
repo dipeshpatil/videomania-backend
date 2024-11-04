@@ -1,5 +1,6 @@
 const Transaction = require("../models/transaction");
 const BlacklistedToken = require("../models/blacklisted-tokens");
+const User = require("../models/user");
 
 const { transactionCreditAction } = require("../permissions/transaction");
 
@@ -37,6 +38,11 @@ const deductUserCredits = async (
   );
 };
 
+const getUserExistingPlan = async (userId) => {
+  const { plan } = await User.findById(userId);
+  return plan;
+};
+
 const adjustUserCredits = async (userId, credits) => {
   await User.updateOne({ _id: userId }, { $inc: { credits } });
   await logTransaction(
@@ -47,8 +53,16 @@ const adjustUserCredits = async (userId, credits) => {
   );
 };
 
+const adjustUserPlan = async (userId, planDetails) => {
+  const { permissions, credits, type } = planDetails;
+  await User.updateOne({ _id: userId }, { $set: { permissions, plan: type } });
+  await adjustUserCredits(userId, credits);
+};
+
 module.exports = {
   deductUserCredits,
   adjustUserCredits,
+  adjustUserPlan,
   logBlacklistedToken,
+  getUserExistingPlan,
 };
