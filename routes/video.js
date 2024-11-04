@@ -8,8 +8,8 @@ const VideoController = require("../controllers/video");
 const { authenticateToken, authoriseRole } = require("../middlewares/auth");
 const { authorizePermission, checkCredits } = require("../middlewares/video");
 
-const { videoPermissions, planCredits } = require("../permissions/video");
-const { USER, ADMIN } = require("../permissions/user");
+const { videoPermissions, planCredits } = require("../enums/video");
+const { USER, ADMIN } = require("../enums/user");
 
 const {
   basicVideoTrimValidator,

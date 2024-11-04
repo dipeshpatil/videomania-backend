@@ -1,4 +1,4 @@
-const { ADMIN } = require("../permissions/user");
+const { ADMIN } = require("../enums/user");
 
 const authorizePermission = (requiredPermission) => {
   return async (req, res, next) => {

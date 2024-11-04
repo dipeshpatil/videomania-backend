@@ -11,7 +11,7 @@ const {
 } = require("../validators/user");
 
 const { authenticateToken, authoriseRole } = require("../middlewares/auth");
-const { USER, ADMIN } = require("../permissions/user");
+const { USER, ADMIN } = require("../enums/user");
 
 /**
  * @route   GET /user/role/:userId

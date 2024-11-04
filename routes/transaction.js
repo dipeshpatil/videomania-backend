@@ -11,7 +11,7 @@ const {
 
 const { authenticateToken, authoriseRole } = require("../middlewares/auth");
 const { checkBlacklistedToken } = require("../middlewares/token");
-const { USER } = require("../permissions/user");
+const { USER } = require("../enums/user");
 
 /**
  * @route   POST /transaction/generate

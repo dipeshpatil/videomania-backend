@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const {
   planEnum,
   videoPermissions: { UPLOAD, SHARE },
-} = require("../permissions/video");
+} = require("../enums/video");
 
 const UserSchema = new mongoose.Schema(
   {
