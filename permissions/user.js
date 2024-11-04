@@ -1,6 +1,6 @@
 const userPermission = {
-  ADMIN: "admin",
-  USER: "user",
+  ADMIN: "ADMIN",
+  USER: "USER",
 };
 
 module.exports = Object.freeze(userPermission);

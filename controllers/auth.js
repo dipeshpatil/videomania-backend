@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const { appConfig } = require("../config/secrets");
+const { USER } = require("../permissions/user");
+const { planDetails, planEnum } = require("../permissions/video");
 
 class AuthController {
   constructor() {}
@@ -27,7 +29,16 @@ class AuthController {
           .json({ errors: [{ msg: "User already exists!" }] });
       }
 
-      user = new User({ name, email, password });
+      const { permissions, credits } = planDetails[planEnum.FREE.toUpperCase()];
+      user = new User({
+        name,
+        email,
+        password,
+        permissions,
+        credits,
+        type: planEnum.FREE,
+        role: USER,
+      });
 
       // Encrypt password
       const salt = await bcrypt.genSalt(10);
