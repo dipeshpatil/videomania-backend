@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+const {
+  planEnum,
+  videoPermissions: { UPLOAD, SHARE },
+} = require("../permissions/video");
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -21,7 +26,7 @@ const UserSchema = new mongoose.Schema(
     },
     permissions: {
       type: [String],
-      default: ["upload"],
+      default: [UPLOAD, SHARE],
     },
     role: {
       type: String,
@@ -29,8 +34,8 @@ const UserSchema = new mongoose.Schema(
     },
     plan: {
       type: String,
-      enum: ["free", "pro", "ultra"],
-      default: "free",
+      enum: Object.keys(planEnum),
+      default: planEnum.FREE,
     },
     credits: {
       type: Number,

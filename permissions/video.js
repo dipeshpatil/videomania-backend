@@ -1,8 +1,8 @@
 const videoPermissions = {
-  UPLOAD: "upload",
-  TRIM: "trim",
-  SHARE: "share",
-  MERGE: "merge",
+  UPLOAD: "UPLOAD",
+  TRIM: "TRIM",
+  SHARE: "SHARE",
+  MERGE: "MERGE",
 };
 
 const planCredits = {
@@ -13,9 +13,9 @@ const planCredits = {
 };
 
 const planEnum = {
-  FREE: "free",
-  PRO: "pro",
-  ULTRA: "ultra",
+  FREE: "FREE",
+  PRO: "PRO",
+  ULTRA: "ULTRA",
 };
 
 const planPriorityMapping = {
