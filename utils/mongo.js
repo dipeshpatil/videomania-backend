@@ -2,7 +2,7 @@ const Transaction = require("../models/transaction");
 const BlacklistedToken = require("../models/blacklisted-tokens");
 const User = require("../models/user");
 
-const { transactionCreditAction } = require("../permissions/transaction");
+const { transactionCreditAction } = require("../enums/transaction");
 
 const logTransaction = async (userId, credits, action, description) => {
   const transaction = new Transaction({

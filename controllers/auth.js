@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const { appConfig } = require("../config/secrets");
-const { USER } = require("../permissions/user");
-const { planDetails, planEnum } = require("../permissions/video");
+const { USER } = require("../enums/user");
+const { planDetails, planEnum } = require("../enums/video");
 
 class AuthController {
   constructor() {}

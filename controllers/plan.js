@@ -8,7 +8,7 @@ const {
     TIER_PLAN_ERROR,
     PLAN_PURCHASE_GOAHEAD,
   },
-} = require("../permissions/video");
+} = require("../enums/video");
 const { creditConfig } = require("../config/secrets");
 const { generatePlanToken, decodeJWTToken } = require("../utils/transaction");
 const { addToBlacklist } = require("../utils/redis");
