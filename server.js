@@ -11,10 +11,7 @@ const app = express();
 
 const { cleanUpExpiredLinks } = require("./utils/common");
 
-const {
-  applyRateLimiter,
-  rateLimiters,
-} = require("./middlewares/rate-limiter");
+const { applyRateLimiter, rateLimiter } = require("./middlewares/rate-limiter");
 
 // MongoDB Connection
 connectDatabase();
@@ -43,15 +40,15 @@ app.use(
 );
 
 // Registering URL Route
-app.use("/video", [applyRateLimiter(rateLimiters.video)], videoRoute);
-app.use("/auth", [applyRateLimiter(rateLimiters.auth)], authRoute);
-app.use("/user", [applyRateLimiter(rateLimiters.user)], userRoute);
+app.use("/video", [applyRateLimiter(rateLimiter.video)], videoRoute);
+app.use("/auth", [applyRateLimiter(rateLimiter.auth)], authRoute);
+app.use("/user", [applyRateLimiter(rateLimiter.user)], userRoute);
 app.use(
   "/transaction",
-  [applyRateLimiter(rateLimiters.transaction)],
+  [applyRateLimiter(rateLimiter.transaction)],
   transactionRoute
 );
-app.use("/plan", [applyRateLimiter(rateLimiters.plan)], planRoute);
+app.use("/plan", [applyRateLimiter(rateLimiter.plan)], planRoute);
 
 setInterval(async () => {
   await cleanUpExpiredLinks();
