@@ -4,13 +4,17 @@ const fs = require("fs");
 const express = require("express");
 const path = require("path");
 
-const RateLimiter = require("./utils/rate-limiter");
 const connectDatabase = require("./config/database");
 const constants = require("./config/constants.json");
 
 const app = express();
 
 const { cleanUpExpiredLinks } = require("./utils/common");
+
+const {
+  applyRateLimiter,
+  rateLimiters,
+} = require("./middlewares/rate-limiter");
 
 // MongoDB Connection
 connectDatabase();
@@ -26,8 +30,6 @@ const transactionRoute = require("./routes/transaction");
 // Importing Plan Route
 const planRoute = require("./routes/plan");
 
-const { applyRateLimiter } = require("./middlewares/rate-limiter");
-
 app.use(express.json({ extended: false }));
 
 // Creating uploads/ folder to store output videos
@@ -40,24 +42,16 @@ app.use(
   express.static(path.join(__dirname, constants.app.outputDirectory))
 );
 
-const rateLimiter = {
-  video: new RateLimiter(3, 1, 10),
-  auth: new RateLimiter(5, 1, 5),
-  user: new RateLimiter(3, 1, 5),
-  transaction: new RateLimiter(3, 1, 5),
-  plan: new RateLimiter(3, 1, 10),
-};
-
 // Registering URL Route
-app.use("/video", [applyRateLimiter(rateLimiter.video)], videoRoute);
-app.use("/auth", [applyRateLimiter(rateLimiter.auth)], authRoute);
-app.use("/user", [applyRateLimiter(rateLimiter.user)], userRoute);
+app.use("/video", [applyRateLimiter(rateLimiters.video)], videoRoute);
+app.use("/auth", [applyRateLimiter(rateLimiters.auth)], authRoute);
+app.use("/user", [applyRateLimiter(rateLimiters.user)], userRoute);
 app.use(
   "/transaction",
-  [applyRateLimiter(rateLimiter.transaction)],
+  [applyRateLimiter(rateLimiters.transaction)],
   transactionRoute
 );
-app.use("/plan", [applyRateLimiter(rateLimiter.plan)], planRoute);
+app.use("/plan", [applyRateLimiter(rateLimiters.plan)], planRoute);
 
 setInterval(async () => {
   await cleanUpExpiredLinks();
