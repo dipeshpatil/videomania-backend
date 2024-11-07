@@ -4,42 +4,34 @@ const fs = require("fs");
 const express = require("express");
 const path = require("path");
 
+const {
+  app: { outputDirectory, port, expiredLinkFrequencyMinutes },
+} = require("./config/constants.json");
 const connectDatabase = require("./config/database");
-const constants = require("./config/constants.json");
+const { cleanUpExpiredLinks } = require("./utils/common");
+const { applyRateLimiter, rateLimiter } = require("./middlewares/rate-limiter");
+
+const videoRoute = require("./routes/video");
+const authRoute = require("./routes/auth");
+const userRoute = require("./routes/user");
+const transactionRoute = require("./routes/transaction");
+const planRoute = require("./routes/plan");
 
 const app = express();
-
-const { cleanUpExpiredLinks } = require("./utils/common");
-
-const { applyRateLimiter, rateLimiter } = require("./middlewares/rate-limiter");
 
 // MongoDB Connection
 connectDatabase();
 
-// Importing Video Route
-const videoRoute = require("./routes/video");
-// Importing Auth Route
-const authRoute = require("./routes/auth");
-// Importing User Route
-const userRoute = require("./routes/user");
-// Importing Transaction Route
-const transactionRoute = require("./routes/transaction");
-// Importing Plan Route
-const planRoute = require("./routes/plan");
+// Creating uploads/ folder to store temp videos
+if (!fs.existsSync(outputDirectory)) {
+  fs.mkdirSync(outputDirectory);
+}
+
+app.use("/uploads", express.static(path.join(__dirname, outputDirectory)));
 
 app.use(express.json({ extended: false }));
 
-// Creating uploads/ folder to store output videos
-if (!fs.existsSync(constants.app.outputDirectory)) {
-  fs.mkdirSync(constants.app.outputDirectory);
-}
-
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, constants.app.outputDirectory))
-);
-
-// Registering URL Route
+// Registering Routes
 app.use("/video", [applyRateLimiter(rateLimiter.video)], videoRoute);
 app.use("/auth", [applyRateLimiter(rateLimiter.auth)], authRoute);
 app.use("/user", [applyRateLimiter(rateLimiter.user)], userRoute);
@@ -52,12 +44,12 @@ app.use("/plan", [applyRateLimiter(rateLimiter.plan)], planRoute);
 
 setInterval(async () => {
   await cleanUpExpiredLinks();
-}, constants.app.expiredLinkFrequencyMinutes * 60 * 1000);
+}, expiredLinkFrequencyMinutes * 60 * 1000);
 
 // Server Running on PORT
-app.listen(constants.app.port, function () {
-  console.log(`Server Running on PORT: ${constants.app.port}`);
+app.listen(port, function () {
+  console.log(`Server Running on PORT: ${port}`);
   console.log(
-    `Expired Links Set To Delete Every: ${constants.app.expiredLinkFrequencyMinutes} Minutes`
+    `Expired Links Set To Delete Every: ${expiredLinkFrequencyMinutes} Minutes`
   );
 });
