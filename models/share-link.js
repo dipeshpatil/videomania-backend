@@ -15,6 +15,11 @@ const shareLinkSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "users",
+    },
   },
   { collection: "share-links" }
 );

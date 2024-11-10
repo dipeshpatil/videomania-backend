@@ -108,6 +108,18 @@ router.get(
   videoController.shareVideoLink
 );
 
+/**
+ * @route   GET video/:videoId
+ * @desc    Get a videoURL
+ * @access  Private (requires static API token)
+ * @body    None
+ */
+router.get(
+  "/:videoId",
+  [authenticateToken, authoriseRole(USER)],
+  videoController.getVideoURL
+);
+
 // debug routes to see data in database
 router.get(
   "/all",

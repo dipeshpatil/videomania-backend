@@ -7,6 +7,259 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"DP28\",\n    \"email\": \"dp28@gmail.com\",\n    \"password\": \"123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/auth/register",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"dp28@gmail.com\",\n    \"password\": \"123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/auth/login",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMDU1NjUwNiwiZXhwIjoxNzMxMTYxMzA2fQ.ReGFd5ZeJ86oDCGlYSk4b4kjjOqeEYpWGeptsgcKBdY",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user/permission/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"permission",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Permission",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"permission\": \"trim\",\n    \"operation\": \"remove\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/user/permission/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"permission",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/user/role/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"role",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMDU1NjUwNiwiZXhwIjoxNzMxMTYxMzA2fQ.ReGFd5ZeJ86oDCGlYSk4b4kjjOqeEYpWGeptsgcKBdY",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user/role/6723b3c8162170994462ea49",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"role",
+								"6723b3c8162170994462ea49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMTE4MDkyMiwiZXhwIjoxNzMxNzg1NzIyfQ.FXsXvyefIPTT0IFuXLi1FMn6XS05r4SG9tqFA08pOeQ",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyZmYxYjNiYjA4ZDQ5NTk4ZmVmMzUxIn0sImlhdCI6MTczMTE5NTM4MiwiZXhwIjoxNzMxODAwMTgyfQ.yx-O9JhSo6EYtndbbhWHT0UtKZOUh3BXy0oP4CDEp7w",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Videos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMTE4MDkyMiwiZXhwIjoxNzMxNzg1NzIyfQ.FXsXvyefIPTT0IFuXLi1FMn6XS05r4SG9tqFA08pOeQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user/videos",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"videos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Links",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMTE4MDkyMiwiZXhwIjoxNzMxNzg1NzIyfQ.FXsXvyefIPTT0IFuXLi1FMn6XS05r4SG9tqFA08pOeQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local}}/user/links",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"user",
+								"links"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Video",
 			"item": [
 				{
@@ -16,7 +269,7 @@
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyZmYxYjNiYjA4ZDQ5NTk4ZmVmMzUxIn0sImlhdCI6MTczMTE5NTM4MiwiZXhwIjoxNzMxODAwMTgyfQ.yx-O9JhSo6EYtndbbhWHT0UtKZOUh3BXy0oP4CDEp7w",
 								"type": "text"
 							}
 						],
@@ -50,13 +303,13 @@
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMTE4MDkyMiwiZXhwIjoxNzMxNzg1NzIyfQ.FXsXvyefIPTT0IFuXLi1FMn6XS05r4SG9tqFA08pOeQ",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"expiryDuration\": 10\n}",
+							"raw": "{\n    \"expiryDuration\": 600\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -64,14 +317,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{local}}/video/share/6723e9d9ed36aac69d745f9c",
+							"raw": "{{local}}/video/share/672ff57f3f81161e23b74f61",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
 								"video",
 								"share",
-								"6723e9d9ed36aac69d745f9c"
+								"672ff57f3f81161e23b74f61"
 							]
 						}
 					},
@@ -81,7 +334,13 @@
 					"name": "Share Video Link",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyZmYxYjNiYjA4ZDQ5NTk4ZmVmMzUxIn0sImlhdCI6MTczMTE5NTM4MiwiZXhwIjoxNzMxODAwMTgyfQ.yx-O9JhSo6EYtndbbhWHT0UtKZOUh3BXy0oP4CDEp7w",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{local}}/video/share/f605a4e5-98d0-4fa1-bcf4-6c499c5aa0a9",
 							"host": [
@@ -103,7 +362,7 @@
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMTE4MDkyMiwiZXhwIjoxNzMxNzg1NzIyfQ.FXsXvyefIPTT0IFuXLi1FMn6XS05r4SG9tqFA08pOeQ",
 								"type": "text"
 							}
 						],
@@ -117,14 +376,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{local}}/video/trim/6722bcce688da41edab860f9",
+							"raw": "{{local}}/video/trim/672fd2cdada6ec77af5385d0",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
 								"video",
 								"trim",
-								"6722bcce688da41edab860f9"
+								"672fd2cdada6ec77af5385d0"
 							]
 						}
 					},
@@ -232,49 +491,22 @@
 			]
 		},
 		{
-			"name": "User",
+			"name": "Transaction",
 			"item": [
 				{
-					"name": "Register User",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Dipesh Patil\",\n    \"email\": \"d7pesh@gmail.com\",\n    \"password\": \"123456\"\n}\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{local}}/auth/register",
-							"host": [
-								"{{local}}"
-							],
-							"path": [
-								"auth",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login User",
+					"name": "Generate Credit Token",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMDU1NjUwNiwiZXhwIjoxNzMxMTYxMzA2fQ.ReGFd5ZeJ86oDCGlYSk4b4kjjOqeEYpWGeptsgcKBdY",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"d7pesh@gmail.com\",\n    \"password\": \"123456\"\n}\n",
+							"raw": "{\n    \"userId\": \"6724e3e673209879021c7518\",\n    \"credits\": 100\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -282,67 +514,32 @@
 							}
 						},
 						"url": {
-							"raw": "{{local}}/auth/login",
+							"raw": "{{local}}/transaction/generate",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"auth",
-								"login"
+								"transaction",
+								"generate"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Permissions",
+					"name": "Commit Transaction",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNGUzZTY3MzIwOTg3OTAyMWM3NTE4In0sImlhdCI6MTczMDU1NjUwNiwiZXhwIjoxNzMxMTYxMzA2fQ.ReGFd5ZeJ86oDCGlYSk4b4kjjOqeEYpWGeptsgcKBdY",
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{local}}/user/permission/6723b3c8162170994462ea49",
-							"host": [
-								"{{local}}"
-							],
-							"path": [
-								"user",
-								"permission",
-								"6723b3c8162170994462ea49"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Permissions Copy",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "Get Permissions Copy",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "Update Permission",
-					"request": {
-						"method": "PUT",
-						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permission\": \"trim\",\n    \"operation\": \"remove\"\n}",
+							"raw": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFuc2FjdGlvbiI6eyJ1c2VySWQiOiI2NzI0ZTNlNjczMjA5ODc5MDIxYzc1MTgiLCJjcmVkaXRzIjoxMDB9LCJpYXQiOjE3MzA3MzYzMjYsImV4cCI6MTczMDczNjM4Nn0.qUhlxYYg8j5-psOGcX6uqMRJvsMH8KcIkNABBZ2wmKM\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -350,41 +547,37 @@
 							}
 						},
 						"url": {
-							"raw": "{{local}}/user/permission/6723b3c8162170994462ea49",
+							"raw": "{{local}}/transaction/commit",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"user",
-								"permission",
-								"6723b3c8162170994462ea49"
+								"transaction",
+								"commit"
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Plan Purchase",
+			"item": [
 				{
-					"name": "Update Permission Copy",
+					"name": "Generate Plan Token",
 					"request": {
-						"method": "PUT",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "Update Role",
-					"request": {
-						"method": "PUT",
+						"method": "POST",
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyZmYxYjNiYjA4ZDQ5NTk4ZmVmMzUxIn0sImlhdCI6MTczMTE5NTM4MiwiZXhwIjoxNzMxODAwMTgyfQ.yx-O9JhSo6EYtndbbhWHT0UtKZOUh3BXy0oP4CDEp7w",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"user\"\n}",
+							"raw": "{\n    \"userId\": \"672ff1b3bb08d49598fef351\",\n    \"planType\": \"ultra\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -392,39 +585,46 @@
 							}
 						},
 						"url": {
-							"raw": "{{local}}/user/role/6723b3c8162170994462ea49",
+							"raw": "{{local}}/plan/generate",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"user",
-								"role",
-								"6723b3c8162170994462ea49"
+								"plan",
+								"generate"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Role",
+					"name": "Purchase Plan",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyM2IzYzgxNjIxNzA5OTQ0NjJlYTQ5In0sImlhdCI6MTczMDM5MzIzOSwiZXhwIjoxNzMwNzUzMjM5fQ._3xG7b4V_c3EL_1YwrZ1b6ugS9_MG6X6MRPWKXt0fXw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyZmYxYjNiYjA4ZDQ5NTk4ZmVmMzUxIn0sImlhdCI6MTczMTE5NTM4MiwiZXhwIjoxNzMxODAwMTgyfQ.yx-O9JhSo6EYtndbbhWHT0UtKZOUh3BXy0oP4CDEp7w",
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbGFuIjp7InVzZXJJZCI6IjY3MmZmMWIzYmIwOGQ0OTU5OGZlZjM1MSIsInBsYW5UeXBlIjoiVUxUUkEifSwiaWF0IjoxNzMxMTk1NDQwLCJleHAiOjE3MzExOTU1MDB9.9TYY0edG_vUJjXFs7UF13iXazeA5K-pXvEdfAfqgpf4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{local}}/user/role/6723b3c8162170994462ea49",
+							"raw": "{{local}}/plan/commit",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"user",
-								"role",
-								"6723b3c8162170994462ea49"
+								"plan",
+								"commit"
 							]
 						}
 					},

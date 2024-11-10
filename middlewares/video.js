@@ -28,7 +28,7 @@ const authorizePermission = (requiredPermission) => {
 const checkCredits = (requiredCredits) => {
   return async (req, res, next) => {
     const userCredits = req.user.credits;
-    if (userCredits > requiredCredits) {
+    if (userCredits >= requiredCredits) {
       next();
     } else {
       res.status(429).json({ error: "Insufficient Credits!" });

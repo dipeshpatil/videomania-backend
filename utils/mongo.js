@@ -43,20 +43,20 @@ const getUserExistingPlan = async (userId) => {
   return plan;
 };
 
-const adjustUserCredits = async (userId, credits) => {
+const adjustUserCredits = async (userId, credits, action, description) => {
   await User.updateOne({ _id: userId }, { $inc: { credits } });
   await logTransaction(
     userId,
     credits,
-    transactionCreditAction.TOPUP,
-    transactionCreditAction.TOPUP
+    action || transactionCreditAction.TOPUP,
+    description || transactionCreditAction.TOPUP
   );
 };
 
 const adjustUserPlan = async (userId, planDetails) => {
   const { permissions, credits, type } = planDetails;
   await User.updateOne({ _id: userId }, { $set: { permissions, plan: type } });
-  await adjustUserCredits(userId, credits);
+  await adjustUserCredits(userId, credits, "planPurchase", "Plan Purchase");
 };
 
 module.exports = {

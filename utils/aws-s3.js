@@ -40,7 +40,18 @@ async function downloadFromS3(bucket, key, downloadPath) {
   });
 }
 
+function getPreSignedVideoURL(bucketName, videoKey, expirySeconds) {
+  const params = {
+    Bucket: bucketName,
+    Key: videoKey,
+    Expires: expirySeconds || 60,
+  };
+
+  return s3.getSignedUrl("getObject", params);
+}
+
 module.exports = {
   uploadToS3,
   downloadFromS3,
+  getPreSignedVideoURL,
 };
