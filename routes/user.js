@@ -59,4 +59,25 @@ router.put(
   user.updatePermission.bind(user)
 );
 
+/**
+ * @route   GET /user
+ * @desc    Get user details
+ * @access  Private (anyone with token can get self details)
+ */
+router.get("/", [authenticateToken], user.getUserDetails);
+
+/**
+ * @route   GET /user/videos
+ * @desc    Get user video details
+ * @access  Private (anyone with token can get self details)
+ */
+router.get("/videos", [authenticateToken], user.getUserVideos);
+
+/**
+ * @route   GET /user/links
+ * @desc    Get user links details
+ * @access  Private (anyone with token can get self details)
+ */
+router.get("/links", [authenticateToken], user.getUserLinks);
+
 module.exports = router;

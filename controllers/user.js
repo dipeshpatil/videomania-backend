@@ -1,6 +1,8 @@
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
+const { Video } = require("../models/video");
+const { ShareableLink } = require("../models/share-link");
 
 const { getUniqueElements } = require("../utils/common");
 
@@ -99,6 +101,62 @@ class UserController {
       return res.status(200).json({ msg: "Role Updated!", role });
     } catch (err) {
       console.error(err.message);
+      return res.status(500).send("Server Error");
+    }
+  }
+
+  async getUserDetails(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { user } = req;
+      if (!user) return res.status(404).json({ msg: "User not found!" });
+      return res.status(200).json({ user });
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).send("Server Error");
+    }
+  }
+
+  async getUserVideos(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { user } = req;
+      if (!user) return res.status(404).json({ msg: "User not found!" });
+
+      const userId = user.id;
+      const videos = await Video.find({ user: userId });
+
+      return res.status(200).json({ videos });
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).send("Server Error");
+    }
+  }
+
+  async getUserLinks(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { user } = req;
+      if (!user) return res.status(404).json({ msg: "User not found!" });
+
+      const userId = user.id;
+      const links = await ShareableLink.find({ user: userId }).populate(
+        "videoId",
+        "_id s3VideoKey s3BucketName title"
+      );
+
+      return res.status(200).json({ links });
+    } catch (error) {
+      console.error(error.message);
       return res.status(500).send("Server Error");
     }
   }

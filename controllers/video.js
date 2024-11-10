@@ -64,6 +64,7 @@ class VideoController {
             duration,
             s3VideoKey: uploadResult.Key,
             s3BucketName: BUCKET,
+            user: req.user.id,
           });
 
           await deductUserCredits(
@@ -158,6 +159,7 @@ class VideoController {
         duration: endTime - startTime,
         s3BucketName: BUCKET,
         s3VideoKey: trimmedKey,
+        user: req.user.id,
       });
 
       await deductUserCredits(
@@ -242,6 +244,7 @@ class VideoController {
             duration,
             s3BucketName: BUCKET,
             s3VideoKey: uploadKey,
+            user: req.user.id,
           });
 
           await deductUserCredits(
@@ -296,6 +299,7 @@ class VideoController {
         videoId: videoId,
         link: link,
         expiryTime: expiryTime,
+        user: req.user.id,
       });
 
       // Generate the shareable URL

@@ -11,7 +11,7 @@ const applyRateLimiter = (rateLimiter) => (req, res, next) => {
 const rateLimiter = {
   video: new RateLimiter(3, 1, 10),
   auth: new RateLimiter(5, 1, 5),
-  user: new RateLimiter(3, 1, 5),
+  user: new RateLimiter(10, 2, 1),
   transaction: new RateLimiter(3, 1, 5),
   plan: new RateLimiter(3, 1, 10),
 };

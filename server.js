@@ -3,6 +3,7 @@ require("dotenv").config({ path: "./.env" });
 const fs = require("fs");
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 
 const {
   app: { outputDirectory, port, expiredLinkFrequencyMinutes },
@@ -26,6 +27,12 @@ connectDatabase();
 if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory);
 }
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN, // Allow only your frontend origin
+  })
+);
 
 app.use("/uploads", express.static(path.join(__dirname, outputDirectory)));
 
