@@ -1,6 +1,6 @@
 {
   "ffmpeg": {
-    "maxDuration": 100,
+    "maxDuration": 600,
     "minDuration": 5,
     "maxSize": 25
   },

@@ -11,7 +11,11 @@ const { ShareableLink } = require("../models/share-link");
 const { planCredits, videoPermissions } = require("../enums/video");
 
 const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
-const { uploadToS3, downloadFromS3 } = require("../utils/aws-s3");
+const {
+  uploadToS3,
+  downloadFromS3,
+  getPreSignedVideoURL,
+} = require("../utils/aws-s3");
 const { deductUserCredits } = require("../utils/mongo");
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
@@ -356,6 +360,28 @@ class VideoController {
 
       // Send the video file
       res.sendFile(tempDownloadPath); // Ensure the video file path is correct
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getVideoURL(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { videoId } = req.params;
+
+    try {
+      const { s3VideoKey, s3BucketName } = await Video.findById(videoId);
+      const videoURL = getPreSignedVideoURL(s3BucketName, s3VideoKey);
+
+      if (!videoURL) {
+        return res.status(404).json({ msg: "Video not found!" });
+      }
+
+      return res.status(200).json({ videoURL });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

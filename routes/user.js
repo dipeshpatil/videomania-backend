@@ -80,4 +80,11 @@ router.get("/videos", [authenticateToken], user.getUserVideos);
  */
 router.get("/links", [authenticateToken], user.getUserLinks);
 
+/**
+ * @route   GET /user/transactions
+ * @desc    Get user transaction details
+ * @access  Private (anyone with token can get self details)
+ */
+router.get("/transactions", [authenticateToken], user.getUserTransactions);
+
 module.exports = router;

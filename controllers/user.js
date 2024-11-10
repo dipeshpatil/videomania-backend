@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/user");
 const { Video } = require("../models/video");
 const { ShareableLink } = require("../models/share-link");
+const Transaction = require("../models/transaction");
 
 const { getUniqueElements } = require("../utils/common");
 
@@ -157,6 +158,22 @@ class UserController {
       return res.status(200).json({ links });
     } catch (error) {
       console.error(error.message);
+      return res.status(500).send("Server Error");
+    }
+  }
+
+  async getUserTransactions(req, res) {
+    try {
+      const { user } = req;
+      if (!user) return res.status(404).json({ msg: "User not found!" });
+
+      const userId = user.id;
+      const transactions = await Transaction.find({ userId }).select(
+        "_id credits action description createdAt"
+      );
+
+      return res.status(200).json({ transactions });
+    } catch (error) {
       return res.status(500).send("Server Error");
     }
   }
