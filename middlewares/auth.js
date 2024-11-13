@@ -6,7 +6,7 @@ const { ADMIN } = require("../enums/user");
 const User = require("../models/user");
 
 const authenticateToken = async (req, res, next) => {
-  const token = req.header("x-auth-token");
+  const token = req.header("x-auth-token") || req.query.token;
   if (!token) {
     return res.status(401).json({ message: "No Token, Authorization Denied!" });
   }
