@@ -9,6 +9,6 @@
     "port": 3000,
     "outputDirectory": "uploads",
     "allowedFileExtensions": [".mp4"],
-    "expiredLinkFrequencyMinutes": 60
+    "expiredLinkFrequencyMinutes": 1
   }
 }

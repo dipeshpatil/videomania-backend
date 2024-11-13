@@ -15,6 +15,7 @@ const {
   basicVideoTrimValidator,
   basicMergeValidator,
   basicShareValidator,
+  basicRenameVideoValidator,
 } = require("../validators/video");
 
 const videoController = new VideoController();
@@ -106,6 +107,18 @@ router.get(
     checkCredits(planCredits.SHARE),
   ],
   videoController.shareVideoLink
+);
+
+/**
+ * @route   PUT video/rename/:videoId
+ * @desc    Renames an existing video title
+ * @access  Private (requires static API token)
+ * @body    { videoName: <string> }
+ */
+router.put(
+  "/rename/:videoId",
+  [authenticateToken, authoriseRole(USER), basicRenameVideoValidator],
+  videoController.renameVideoTitle
 );
 
 /**

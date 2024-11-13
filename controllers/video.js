@@ -387,6 +387,31 @@ class VideoController {
     }
   }
 
+  async renameVideoTitle(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { videoId } = req.params;
+      const { videoName } = req.body;
+
+      const video = await Video.findOne({ title: videoName });
+
+      if (video && video.title)
+        return res.status(400).json({ error: "Video title already exists!" });
+
+      await Video.findByIdAndUpdate(videoId, {
+        $set: { title: videoName },
+      });
+
+      res.json({ msg: "Update Success" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   async getAllVideos(req, res) {
     try {
       const videos = await Video.find({});

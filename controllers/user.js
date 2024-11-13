@@ -150,10 +150,9 @@ class UserController {
       if (!user) return res.status(404).json({ msg: "User not found!" });
 
       const userId = user.id;
-      const links = await ShareableLink.find({ user: userId }).populate(
-        "videoId",
-        "_id s3VideoKey s3BucketName title"
-      );
+      const links = await ShareableLink.find({ user: userId })
+        .populate("videoId", "_id s3VideoKey s3BucketName title")
+        .populate("user", "name");
 
       return res.status(200).json({ links });
     } catch (error) {

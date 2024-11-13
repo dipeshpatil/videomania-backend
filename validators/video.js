@@ -18,4 +18,9 @@ module.exports = {
   basicShareValidator: [
     param("videoId").not().isEmpty().withMessage("videoId must be valid"),
   ],
+
+  basicRenameVideoValidator: [
+    param("videoId", "videoId is required").not().isEmpty(),
+    body("videoName", "Video Name is required").not().isEmpty(),
+  ],
 };
