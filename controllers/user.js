@@ -128,12 +128,24 @@ class UserController {
     }
     try {
       const { user } = req;
+      const { limit, pageNumber } = req.query;
+
       if (!user) return res.status(404).json({ msg: "User not found!" });
 
       const userId = user.id;
-      const videos = await Video.find({ user: userId });
+      let videos = [];
 
-      return res.status(200).json({ videos });
+      const itemCount = await Video.countDocuments({ user: userId });
+
+      if (limit && pageNumber) {
+        videos = await Video.find({ user: userId })
+          .skip(limit * (pageNumber - 1))
+          .limit(limit);
+      } else {
+        videos = await Video.find({ user: userId });
+      }
+
+      return res.status(200).json({ itemCount, videos });
     } catch (error) {
       console.error(error.message);
       return res.status(500).send("Server Error");

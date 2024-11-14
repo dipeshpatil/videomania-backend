@@ -397,9 +397,12 @@ class VideoController {
       const { videoId } = req.params;
       const { videoName } = req.body;
 
-      const video = await Video.findOne({ title: videoName });
+      const video = await Video.findOne({
+        title: videoName,
+        user: req.user._id,
+      });
 
-      if (video && video.title)
+      if (video && video.title === videoName)
         return res.status(400).json({ error: "Video title already exists!" });
 
       await Video.findByIdAndUpdate(videoId, {
