@@ -50,8 +50,26 @@ function getPreSignedVideoURL(bucketName, videoKey, expirySeconds) {
   return s3.getSignedUrl("getObject", params);
 }
 
+// Function to delete an object from S3
+async function deleteFromS3(key, bucket) {
+  const params = {
+    Bucket: bucket,
+    Key: key, // The key of the object to delete
+  };
+
+  try {
+    const result = await s3.deleteObject(params).promise();
+    console.log("Object deleted successfully:", result);
+    return result;
+  } catch (error) {
+    console.error("Error deleting object:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   uploadToS3,
   downloadFromS3,
   getPreSignedVideoURL,
+  deleteFromS3,
 };

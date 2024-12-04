@@ -15,6 +15,7 @@ const {
   uploadToS3,
   downloadFromS3,
   getPreSignedVideoURL,
+  deleteFromS3,
 } = require("../utils/aws-s3");
 const { deductUserCredits } = require("../utils/mongo");
 
@@ -415,21 +416,27 @@ class VideoController {
     }
   }
 
-  async getAllVideos(req, res) {
+  async deleteVideo(req, res) {
     try {
-      const videos = await Video.find({});
-      res.status(200).json(videos);
-    } catch (err) {
-      res.status(500).json({ error: "Error fetching videos" });
-    }
-  }
+      const { videoId } = req.params;
+      const userId = req.user.id;
 
-  async getAllLinks(req, res) {
-    try {
-      const links = await ShareableLink.find({});
-      res.status(200).json(links);
-    } catch (err) {
-      res.status(500).json({ error: "Error fetching links" });
+      if (userId && videoId) {
+        const { s3VideoKey, s3BucketName } = await Video.findById(videoId);
+
+        const deletedVideo = await Video.deleteOne({
+          _id: videoId,
+          user: userId,
+        });
+        if (deletedVideo.acknowledged) {
+          await deleteFromS3(s3VideoKey, s3BucketName);
+          res.status(200).json({ msg: "Delete successful" });
+        }
+      } else {
+        res.status(500).json({ error: "Failed to delete video" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 }

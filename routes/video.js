@@ -133,16 +133,16 @@ router.get(
   videoController.getVideoURL
 );
 
-// debug routes to see data in database
-router.get(
-  "/all",
-  [authenticateToken, authoriseRole(ADMIN)],
-  videoController.getAllVideos
-);
-router.get(
-  "/all-links",
-  [authenticateToken, authoriseRole(ADMIN)],
-  videoController.getAllLinks
+/**
+ * @route   DELETE video/:videoId
+ * @desc    Delete a video
+ * @access  Private (requires static API token)
+ * @body    None
+ */
+router.delete(
+  "/:videoId",
+  [authenticateToken, authoriseRole(USER)],
+  videoController.deleteVideo
 );
 
 module.exports = router;
