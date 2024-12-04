@@ -178,12 +178,24 @@ class UserController {
       const { user } = req;
       if (!user) return res.status(404).json({ msg: "User not found!" });
 
+      const { limit, pageNumber } = req.query;
+      let transactions = [];
       const userId = user.id;
-      const transactions = await Transaction.find({ userId }).select(
-        "_id credits action description createdAt"
-      );
+      const itemCount = await Transaction.countDocuments({ userId });
 
-      return res.status(200).json({ transactions });
+      if (limit && pageNumber) {
+        transactions = await Transaction.find({ userId })
+          .sort({ createdAt: -1 })
+          .skip(limit * (pageNumber - 1))
+          .limit(limit)
+          .select("_id credits action description createdAt");
+      } else {
+        transactions = await Transaction.find({ userId }).select(
+          "_id credits action description createdAt"
+        );
+      }
+
+      return res.status(200).json({ itemCount, transactions });
     } catch (error) {
       return res.status(500).send("Server Error");
     }
