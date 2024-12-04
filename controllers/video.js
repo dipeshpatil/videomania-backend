@@ -431,6 +431,8 @@ class VideoController {
         if (deletedVideo.acknowledged) {
           await deleteFromS3(s3VideoKey, s3BucketName);
           res.status(200).json({ msg: "Delete successful" });
+        } else {
+          return res.status(400).json({ msg: "Failed to delete video" });
         }
       } else {
         res.status(500).json({ error: "Failed to delete video" });
