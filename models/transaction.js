@@ -13,7 +13,7 @@ const transactionSchema = new mongoose.Schema(
     },
     action: {
       type: String,
-      enum: ["creditDeduction", "creditTopUp"],
+      enum: ["creditDeduction", "creditTopUp", "planPurchase"],
       required: true,
     },
     description: {
