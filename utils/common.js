@@ -20,33 +20,49 @@ async function cleanUpExpiredLinks() {
 }
 
 async function paginate({
-  options = { model, projection, select, sort },
+  options = { projection, select, sort, model, populate },
   currentPage,
   limit,
 }) {
-  const { projection, select, sort, model } = options;
-  const startIndex = (currentPage - 1) * limit;
+  try {
+    const { projection, select, sort, model, populate = [] } = options;
 
-  const [items, totalCount] = await Promise.all([
-    model
+    currentPage = parseInt(currentPage) || 1;
+    limit = parseInt(limit) || 10;
+    const startIndex = (currentPage - 1) * limit;
+
+    let query = model
       .find(projection)
       .skip(startIndex)
       .limit(limit)
-      .sort(sort || null)
-      .select(select || null),
-    model.countDocuments(projection),
-  ]);
+      .sort(sort || {})
+      .select(select || null);
 
-  return {
-    data: items,
-    pagination: {
-      currentPage: currentPage,
-      totalPages: Math.ceil(totalCount / limit),
-      totalItems: totalCount,
-      hasNextPage: currentPage * limit < totalCount,
-      hasPrevPage: currentPage > 1,
-    },
-  };
+    // Apply multiple populate options dynamically
+    if (Array.isArray(populate) && populate.length > 0) {
+      populate.forEach((pop) => {
+        query = query.populate(pop);
+      });
+    }
+
+    const [items, totalCount] = await Promise.all([
+      query, // Execute the query with all chained populate fields
+      model.countDocuments(projection),
+    ]);
+
+    return {
+      data: items,
+      pagination: {
+        currentPage,
+        totalPages: Math.ceil(totalCount / limit),
+        totalItems: totalCount,
+        hasNextPage: currentPage * limit < totalCount,
+        hasPrevPage: currentPage > 1,
+      },
+    };
+  } catch (error) {
+    throw new Error(`Pagination failed: ${error.message}`);
+  }
 }
 
 module.exports = {

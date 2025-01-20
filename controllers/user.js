@@ -155,15 +155,26 @@ class UserController {
       return res.status(400).json({ errors: errors.array() });
     }
     try {
+      const limit = Number(req.query.limit) || 10;
+      const pageNumber = Number(req.query.pageNumber) || 1;
       const { user } = req;
       if (!user) return res.status(404).json({ msg: "User not found!" });
 
-      const userId = user.id;
-      const links = await ShareableLink.find({ user: userId })
-        .populate("videoId", "_id s3VideoKey s3BucketName title")
-        .populate("user", "name");
+      const result = await paginate({
+        options: {
+          model: ShareableLink,
+          projection: { user: user.id },
+          sort: { createdAt: -1 },
+          populate: [
+            { path: "videoId", select: "_id s3VideoKey s3BucketName title" },
+            { path: "user", select: "name" },
+          ],
+        },
+        currentPage: pageNumber,
+        limit,
+      });
 
-      return res.status(200).json({ links });
+      return res.status(200).json(result);
     } catch (error) {
       console.error(error.message);
       return res.status(500).send("Server Error");
