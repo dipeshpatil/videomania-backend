@@ -5,7 +5,7 @@ const { Video } = require("../models/video");
 const { ShareableLink } = require("../models/share-link");
 const Transaction = require("../models/transaction");
 
-const { getUniqueElements } = require("../utils/common");
+const { getUniqueElements, paginate } = require("../utils/common");
 
 class UserController {
   constructor() {}
@@ -128,24 +128,21 @@ class UserController {
     }
     try {
       const { user } = req;
-      const { limit, pageNumber } = req.query;
+      const limit = Number(req.query.limit) || 10;
+      const pageNumber = Number(req.query.pageNumber) || 1;
 
       if (!user) return res.status(404).json({ msg: "User not found!" });
 
-      const userId = user.id;
-      let videos = [];
+      const videos = await paginate({
+        options: {
+          model: Video,
+          projection: { user: user.id },
+        },
+        currentPage: pageNumber,
+        limit,
+      });
 
-      const itemCount = await Video.countDocuments({ user: userId });
-
-      if (limit && pageNumber) {
-        videos = await Video.find({ user: userId })
-          .skip(limit * (pageNumber - 1))
-          .limit(limit);
-      } else {
-        videos = await Video.find({ user: userId });
-      }
-
-      return res.status(200).json({ itemCount, videos });
+      return res.status(200).json(videos);
     } catch (error) {
       console.error(error.message);
       return res.status(500).send("Server Error");
@@ -178,24 +175,23 @@ class UserController {
       const { user } = req;
       if (!user) return res.status(404).json({ msg: "User not found!" });
 
-      const { limit, pageNumber } = req.query;
-      let transactions = [];
-      const userId = user.id;
-      const itemCount = await Transaction.countDocuments({ userId });
+      const limit = Number(req.query.limit) || 10;
+      const pageNumber = Number(req.query.pageNumber) || 1;
 
-      if (limit && pageNumber) {
-        transactions = await Transaction.find({ userId })
-          .sort({ createdAt: -1 })
-          .skip(limit * (pageNumber - 1))
-          .limit(limit)
-          .select("_id credits action description createdAt");
-      } else {
-        transactions = await Transaction.find({ userId }).select(
-          "_id credits action description createdAt"
-        );
-      }
+      if (!user) return res.status(404).json({ msg: "User not found!" });
 
-      return res.status(200).json({ itemCount, transactions });
+      const transactions = await paginate({
+        options: {
+          model: Transaction,
+          projection: { userId: user.id },
+          select: "_id credits action description createdAt",
+          sort: { createdAt: -1 },
+        },
+        currentPage: pageNumber,
+        limit,
+      });
+
+      return res.status(200).json(transactions);
     } catch (error) {
       return res.status(500).send("Server Error");
     }
