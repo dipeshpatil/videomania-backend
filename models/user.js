@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const {
   planEnum,
   videoPermissions: { UPLOAD, SHARE },
-} = require("../enums/video");
+} = require('../enums/video');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "user",
+      default: 'user',
     },
     plan: {
       type: String,
@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema(
       default: 100,
     },
   },
-  { collection: "users" }
+  { collection: 'users' }
 );
 
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = User = mongoose.model('users', UserSchema);

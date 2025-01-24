@@ -1,17 +1,15 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
-const PlanPurchaseController = require("../controllers/plan");
+const PlanPurchaseController = require('../controllers/plan');
 const planPurchase = new PlanPurchaseController();
 
-const {
-  basicPlanPurchaseTokenGenerationValidator,
-} = require("../validators/plan");
+const { basicPlanPurchaseTokenGenerationValidator } = require('../validators/plan');
 
-const { authenticateToken, authoriseRole } = require("../middlewares/auth");
-const { checkBlacklistedToken } = require("../middlewares/token");
-const { USER } = require("../enums/user");
+const { authenticateToken, authoriseRole } = require('../middlewares/auth');
+const { checkBlacklistedToken } = require('../middlewares/token');
+const { USER } = require('../enums/user');
 
 /**
  * @route   POST /plan/generate
@@ -20,12 +18,8 @@ const { USER } = require("../enums/user");
  * @body  { userId: <ObjectId>, credits: <number> }
  */
 router.post(
-  "/generate",
-  [
-    authenticateToken,
-    authoriseRole(USER),
-    basicPlanPurchaseTokenGenerationValidator,
-  ],
+  '/generate',
+  [authenticateToken, authoriseRole(USER), basicPlanPurchaseTokenGenerationValidator],
   planPurchase.generatePlanToken
 );
 
@@ -36,7 +30,7 @@ router.post(
  * @body  { token: <JWT Token> }
  */
 router.post(
-  "/commit",
+  '/commit',
   [authenticateToken, authoriseRole(USER), checkBlacklistedToken],
   planPurchase.purchasePlan.bind(planPurchase)
 );

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const blacklistedTokenSchema = new mongoose.Schema(
   {
@@ -9,7 +9,7 @@ const blacklistedTokenSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "users",
+      ref: 'users',
     },
     credits: {
       type: Number,
@@ -20,10 +20,7 @@ const blacklistedTokenSchema = new mongoose.Schema(
       default: Date.now, // Set the timestamp when the token is blacklisted
     },
   },
-  { collection: "blacklisted-tokens" }
+  { collection: 'blacklisted-tokens' }
 );
 
-module.exports = BlacklistedToken = mongoose.model(
-  "blacklisted-tokens",
-  blacklistedTokenSchema
-);
+module.exports = BlacklistedToken = mongoose.model('blacklisted-tokens', blacklistedTokenSchema);

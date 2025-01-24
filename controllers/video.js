@@ -1,23 +1,23 @@
-const fs = require("fs");
-const path = require("path");
-const ffmpeg = require("fluent-ffmpeg");
-const { v4: uuidv4 } = require("uuid");
-const { validationResult } = require("express-validator");
+const fs = require('fs');
+const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
+const { v4: uuidv4 } = require('uuid');
+const { validationResult } = require('express-validator');
 
-const constants = require("../config/constants.json");
-const { s3Config } = require("../config/secrets");
-const { Video } = require("../models/video");
-const { ShareableLink } = require("../models/share-link");
-const { planCredits, videoPermissions } = require("../enums/video");
+const constants = require('../config/constants.json');
+const { s3Config } = require('../config/secrets');
+const { Video } = require('../models/video');
+const { ShareableLink } = require('../models/share-link');
+const { planCredits, videoPermissions } = require('../enums/video');
 
-const { getVideoDimensions, getVideoDuration } = require("../utils/ffmpeg");
+const { getVideoDimensions, getVideoDuration } = require('../utils/ffmpeg');
 const {
   uploadToS3,
   downloadFromS3,
   getPreSignedVideoURL,
   deleteFromS3,
-} = require("../utils/aws-s3");
-const { deductUserCredits } = require("../utils/mongo");
+} = require('../utils/aws-s3');
+const { deductUserCredits } = require('../utils/mongo');
 
 const MAX_ALLOWED_FILE_SIZE = constants.ffmpeg.maxSize * 1024 * 1024;
 const BUCKET = s3Config.s3BucketName;
@@ -29,28 +29,23 @@ class VideoController {
     try {
       const file = req.file;
       if (!file) {
-        return res.status(400).json({ error: "No file uploaded" });
+        return res.status(400).json({ error: 'No file uploaded' });
       }
 
       const { size, path, originalname } = file;
 
       if (size > MAX_ALLOWED_FILE_SIZE) {
-        return res
-          .status(400)
-          .json({ error: "File size exceeds the maximum limit" });
+        return res.status(400).json({ error: 'File size exceeds the maximum limit' });
       }
 
       ffmpeg.ffprobe(path, async (err, metadata) => {
-        if (err) return res.status(500).json({ error: "Invalid video file" });
+        if (err) {return res.status(500).json({ error: 'Invalid video file' });}
 
         const duration = metadata.format.duration;
 
-        if (
-          duration < constants.ffmpeg.minDuration ||
-          duration > constants.ffmpeg.maxDuration
-        ) {
+        if (duration < constants.ffmpeg.minDuration || duration > constants.ffmpeg.maxDuration) {
           fs.unlinkSync(path); // Delete the file if invalid duration
-          return res.status(400).json({ error: "Invalid video duration" });
+          return res.status(400).json({ error: 'Invalid video duration' });
         }
 
         try {
@@ -83,9 +78,7 @@ class VideoController {
         } catch (uploadError) {
           console.log(uploadError);
 
-          res
-            .status(500)
-            .json({ error: "Failed to upload to S3", msg: uploadError });
+          res.status(500).json({ error: 'Failed to upload to S3', msg: uploadError });
         } finally {
           fs.unlinkSync(path); // Clean up local file
         }
@@ -108,53 +101,40 @@ class VideoController {
     const startTime = parseFloat(start);
     const endTime = parseFloat(end);
 
-    if (
-      isNaN(startTime) ||
-      isNaN(endTime) ||
-      startTime < 0 ||
-      endTime <= startTime
-    ) {
-      return res.status(400).json({ error: "Invalid start or end time" });
+    if (isNaN(startTime) || isNaN(endTime) || startTime < 0 || endTime <= startTime) {
+      return res.status(400).json({ error: 'Invalid start or end time' });
     }
 
     try {
       // Check if the video exists
       const video = await Video.findById(videoId);
       if (!video) {
-        return res.status(404).json({ error: "Video not found" });
+        return res.status(404).json({ error: 'Video not found' });
       }
 
       const inputKey = video.s3VideoKey; // S3 key of the original video
-      const tempDownloadPath = path.join(
-        "/tmp",
-        `downloaded_${Date.now()}.mp4`
-      );
-      const tempTrimmedPath = path.join("/tmp", `trimmed_${Date.now()}.mp4`);
+      const tempDownloadPath = path.join('/tmp', `downloaded_${Date.now()}.mp4`);
+      const tempTrimmedPath = path.join('/tmp', `trimmed_${Date.now()}.mp4`);
       const trimmedFileName = `trimmed_${Date.now()}_${video.title}`;
       const trimmedKey = `trims/${trimmedFileName}`;
 
-      console.log("Downloading video from S3...");
+      console.log('Downloading video from S3...');
       await downloadFromS3(video.s3BucketName, inputKey, tempDownloadPath);
 
-      console.log("Trimming the video...");
+      console.log('Trimming the video...');
       await new Promise((resolve, reject) => {
         ffmpeg(tempDownloadPath)
           .setStartTime(startTime)
           .setDuration(endTime - startTime)
           .output(tempTrimmedPath)
-          .on("end", resolve)
-          .on("error", reject)
+          .on('end', resolve)
+          .on('error', reject)
           .run();
       });
 
       // Step 3: Upload trimmed video back to S3
-      console.log("Uploading trimmed video to S3...");
-      const uploadResult = await uploadToS3(
-        tempTrimmedPath,
-        trimmedKey,
-        BUCKET,
-        "video/mp4"
-      );
+      console.log('Uploading trimmed video to S3...');
+      const uploadResult = await uploadToS3(tempTrimmedPath, trimmedKey, BUCKET, 'video/mp4');
 
       // Step 4: Save metadata of trimmed video (optional)
       const newVideo = await Video.create({
@@ -196,10 +176,10 @@ class VideoController {
       const videos = await Video.find({ _id: { $in: videoIds } });
 
       if (videos.length !== videoIds.length)
-        return res.status(404).json({ error: "One or more videos not found" });
+      {return res.status(404).json({ error: 'One or more videos not found' });}
 
       const s3DownloadPromises = videos.map((video, index) => {
-        const tempPath = path.join("/tmp", `video_${index}_${Date.now()}.mp4`);
+        const tempPath = path.join('/tmp', `video_${index}_${Date.now()}.mp4`);
         return downloadFromS3(video.s3BucketName, video.s3VideoKey, tempPath);
       });
 
@@ -214,32 +194,25 @@ class VideoController {
 
       if (new Set(dimensions).size > 1) {
         tempPaths.forEach((p) => fs.unlinkSync(p)); // Cleanup temp files
-        return res
-          .status(400)
-          .json({ error: "Cannot merge videos with different dimensions" });
+        return res.status(400).json({ error: 'Cannot merge videos with different dimensions' });
       }
 
       // Merge videos using ffmpeg
       const outputFilename = `merged-${Date.now()}.mp4`;
-      const tempOutputPath = path.join("/tmp", outputFilename);
+      const tempOutputPath = path.join('/tmp', outputFilename);
 
       const ffmpegCommand = ffmpeg();
       tempPaths.forEach((filePath) => ffmpegCommand.input(filePath));
 
       ffmpegCommand
-        .on("end", async () => {
-          console.log("Merging completed.");
+        .on('end', async () => {
+          console.log('Merging completed.');
 
           // Get duration and upload the merged video to S3
           const duration = await getVideoDuration(tempOutputPath);
           const uploadKey = `merges/${outputFilename}`;
 
-          const uploadResult = await uploadToS3(
-            tempOutputPath,
-            uploadKey,
-            BUCKET,
-            "video/mp4"
-          );
+          const uploadResult = await uploadToS3(tempOutputPath, uploadKey, BUCKET, 'video/mp4');
 
           // Save merged video metadata to DB
           const newVideo = await Video.create({
@@ -265,9 +238,9 @@ class VideoController {
 
           res.status(200).json(newVideo);
         })
-        .on("error", (err) => {
-          console.error("Error merging videos:", err);
-          res.status(500).json({ error: "Error merging videos" });
+        .on('error', (err) => {
+          console.error('Error merging videos:', err);
+          res.status(500).json({ error: 'Error merging videos' });
         })
         .mergeToFile(tempOutputPath);
     } catch (error) {
@@ -288,16 +261,14 @@ class VideoController {
       // Check if the video exists
       const video = await Video.findById(videoId);
       if (!video) {
-        return res.status(404).json({ error: "Video not found" });
+        return res.status(404).json({ error: 'Video not found' });
       }
 
       // Generate a unique link
       const link = uuidv4();
 
       // Calculate the expiration time
-      const expiryTime = new Date(
-        Date.now() + (expiryDuration || 10) * 60 * 1000
-      );
+      const expiryTime = new Date(Date.now() + (expiryDuration || 10) * 60 * 1000);
 
       // Store the shareable link in the database
       const shareableLink = await ShareableLink.create({
@@ -308,7 +279,7 @@ class VideoController {
       });
 
       // Generate the shareable URL
-      const shareableUrl = `${req.protocol}://${req.get("host")}/video/share/${
+      const shareableUrl = `${req.protocol}://${req.get('host')}/video/share/${
         shareableLink.link
       }?token=${process.env.STATIC_TOKEN}`;
 
@@ -320,7 +291,7 @@ class VideoController {
       );
 
       res.status(201).json({
-        message: "Shareable link generated successfully",
+        message: 'Shareable link generated successfully',
         url: shareableUrl,
         expiresAt: expiryTime,
         link: shareableLink.link,
@@ -337,26 +308,23 @@ class VideoController {
       // Find the shareable link in the database
       const shareableLink = await ShareableLink.findOne({ link });
       if (!shareableLink) {
-        return res.status(404).json({ error: "Invalid or expired link" });
+        return res.status(404).json({ error: 'Invalid or expired link' });
       }
 
       // Check if the link has expired
       if (new Date() > shareableLink.expiryTime) {
-        return res.status(410).json({ error: "Link has expired" });
+        return res.status(410).json({ error: 'Link has expired' });
       }
 
       // Find the video associated with the link
       const video = await Video.findById(shareableLink.videoId);
       if (!video) {
-        return res.status(404).json({ error: "Video not found" });
+        return res.status(404).json({ error: 'Video not found' });
       }
 
       const inputKey = video.s3VideoKey;
-      const tempDownloadPath = path.join(
-        "/tmp",
-        `downloaded_${Date.now()}.mp4`
-      );
-      console.log("Downloading video from S3...");
+      const tempDownloadPath = path.join('/tmp', `downloaded_${Date.now()}.mp4`);
+      console.log('Downloading video from S3...');
       await downloadFromS3(video.s3BucketName, inputKey, tempDownloadPath);
 
       // Send the video file
@@ -379,7 +347,7 @@ class VideoController {
       const videoURL = getPreSignedVideoURL(s3BucketName, s3VideoKey);
 
       if (!videoURL) {
-        return res.status(404).json({ msg: "Video not found!" });
+        return res.status(404).json({ msg: 'Video not found!' });
       }
 
       return res.status(200).json({ videoURL });
@@ -404,13 +372,13 @@ class VideoController {
       });
 
       if (video && video.title === videoName)
-        return res.status(400).json({ error: "Video title already exists!" });
+      {return res.status(400).json({ error: 'Video title already exists!' });}
 
       await Video.findByIdAndUpdate(videoId, {
         $set: { title: videoName },
       });
 
-      res.json({ msg: "Update Success" });
+      res.json({ msg: 'Update Success' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -430,12 +398,12 @@ class VideoController {
         });
         if (deletedVideo.acknowledged) {
           await deleteFromS3(s3VideoKey, s3BucketName);
-          res.status(200).json({ msg: "Delete successful" });
+          res.status(200).json({ msg: 'Delete successful' });
         } else {
-          return res.status(400).json({ msg: "Failed to delete video" });
+          return res.status(400).json({ msg: 'Failed to delete video' });
         }
       } else {
-        res.status(500).json({ error: "Failed to delete video" });
+        res.status(500).json({ error: 'Failed to delete video' });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });

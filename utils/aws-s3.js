@@ -1,7 +1,7 @@
-const fs = require("fs");
-const AWS = require("aws-sdk");
+const fs = require('fs');
+const AWS = require('aws-sdk');
 
-const { s3Config } = require("../config/secrets");
+const { s3Config } = require('../config/secrets');
 
 const s3 = new AWS.S3({
   accessKeyId: s3Config.awsAccessKey,
@@ -15,7 +15,7 @@ async function uploadToS3(filePath, key, bucket, mimeType) {
     Bucket: bucket,
     Key: key, // Unique key for the file
     Body: fileStream,
-    ContentType: mimeType || "video/mp4",
+    ContentType: mimeType || 'video/mp4',
   };
 
   return s3.upload(params).promise(); // Returns a promise
@@ -28,11 +28,11 @@ async function downloadFromS3(bucket, key, downloadPath) {
   return new Promise((resolve, reject) => {
     s3.getObject(params)
       .createReadStream()
-      .on("error", (err) => {
+      .on('error', (err) => {
         console.error(`Error downloading ${key}:`, err);
         reject(err); // Ensure the promise rejects on error
       })
-      .on("end", () => {
+      .on('end', () => {
         console.log(`Downloaded ${key} to ${downloadPath}`);
         resolve(downloadPath); // Resolve the path correctly
       })
@@ -47,7 +47,7 @@ function getPreSignedVideoURL(bucketName, videoKey, expirySeconds) {
     Expires: expirySeconds || 60,
   };
 
-  return s3.getSignedUrl("getObject", params);
+  return s3.getSignedUrl('getObject', params);
 }
 
 // Function to delete an object from S3
@@ -59,10 +59,10 @@ async function deleteFromS3(key, bucket) {
 
   try {
     const result = await s3.deleteObject(params).promise();
-    console.log("Object deleted successfully:", result);
+    console.log('Object deleted successfully:', result);
     return result;
   } catch (error) {
-    console.error("Error deleting object:", error);
+    console.error('Error deleting object:', error);
     throw error;
   }
 }

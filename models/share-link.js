@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const shareLinkSchema = new mongoose.Schema(
   {
     videoId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "videos",
+      ref: 'videos',
     },
     link: {
       type: String,
@@ -18,12 +18,12 @@ const shareLinkSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "users",
+      ref: 'users',
     },
   },
-  { collection: "share-links" }
+  { collection: 'share-links' }
 );
 
 module.exports = {
-  ShareableLink: mongoose.model("share-links", shareLinkSchema),
+  ShareableLink: mongoose.model('share-links', shareLinkSchema),
 };

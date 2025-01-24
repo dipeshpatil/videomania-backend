@@ -1,22 +1,22 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
-const { MulterUtil } = require("../utils/multer");
-const VideoController = require("../controllers/video");
+const { MulterUtil } = require('../utils/multer');
+const VideoController = require('../controllers/video');
 
-const { authenticateToken, authoriseRole } = require("../middlewares/auth");
-const { authorizePermission, checkCredits } = require("../middlewares/video");
+const { authenticateToken, authoriseRole } = require('../middlewares/auth');
+const { authorizePermission, checkCredits } = require('../middlewares/video');
 
-const { videoPermissions, planCredits } = require("../enums/video");
-const { USER, ADMIN } = require("../enums/user");
+const { videoPermissions, planCredits } = require('../enums/video');
+const { USER, ADMIN } = require('../enums/user');
 
 const {
   basicVideoTrimValidator,
   basicMergeValidator,
   basicShareValidator,
   basicRenameVideoValidator,
-} = require("../validators/video");
+} = require('../validators/video');
 
 const videoController = new VideoController();
 
@@ -27,13 +27,13 @@ const videoController = new VideoController();
  * @body    { file: <file> }  // Example: { "file": <video file> }
  */
 router.post(
-  "/upload",
+  '/upload',
   [
     authenticateToken,
     authoriseRole(USER),
     authorizePermission(videoPermissions.UPLOAD),
     checkCredits(planCredits.UPLOAD),
-    MulterUtil.upload.single("file"),
+    MulterUtil.upload.single('file'),
   ],
   videoController.uploadVideo
 );
@@ -45,7 +45,7 @@ router.post(
  * @body    { start: <number>, end: <number> }  // Example: { "start": 5, "end": 60 }
  */
 router.post(
-  "/trim/:videoId",
+  '/trim/:videoId',
   [
     authenticateToken,
     authoriseRole(USER),
@@ -63,7 +63,7 @@ router.post(
  * @body    { videoIds: [<number>] }  // Example: { "videoIds": [1, 2, 3] }
  */
 router.post(
-  "/merge",
+  '/merge',
   [
     authenticateToken,
     authoriseRole(USER),
@@ -81,7 +81,7 @@ router.post(
  * @body    { expiryDuration: <number> }  // Example: { "expiryDuration": 30 }
  */
 router.post(
-  "/share/:videoId",
+  '/share/:videoId',
   [
     authenticateToken,
     authoriseRole(USER),
@@ -99,7 +99,7 @@ router.post(
  * @body    None
  */
 router.get(
-  "/share/:link",
+  '/share/:link',
   [
     authenticateToken,
     authoriseRole(USER),
@@ -116,7 +116,7 @@ router.get(
  * @body    { videoName: <string> }
  */
 router.put(
-  "/rename/:videoId",
+  '/rename/:videoId',
   [authenticateToken, authoriseRole(USER), basicRenameVideoValidator],
   videoController.renameVideoTitle
 );
@@ -127,11 +127,7 @@ router.put(
  * @access  Private (requires static API token)
  * @body    None
  */
-router.get(
-  "/:videoId",
-  [authenticateToken, authoriseRole(USER)],
-  videoController.getVideoURL
-);
+router.get('/:videoId', [authenticateToken, authoriseRole(USER)], videoController.getVideoURL);
 
 /**
  * @route   DELETE video/:videoId
@@ -139,10 +135,6 @@ router.get(
  * @access  Private (requires static API token)
  * @body    None
  */
-router.delete(
-  "/:videoId",
-  [authenticateToken, authoriseRole(USER)],
-  videoController.deleteVideo
-);
+router.delete('/:videoId', [authenticateToken, authoriseRole(USER)], videoController.deleteVideo);
 
 module.exports = router;

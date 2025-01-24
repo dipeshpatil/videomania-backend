@@ -1,12 +1,12 @@
-const { validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const User = require("../models/user");
+const User = require('../models/user');
 
-const { appConfig } = require("../config/secrets");
-const { USER } = require("../enums/user");
-const { planDetails, planEnum } = require("../enums/video");
+const { appConfig } = require('../config/secrets');
+const { USER } = require('../enums/user');
+const { planDetails, planEnum } = require('../enums/video');
 
 class AuthController {
   constructor() {}
@@ -24,9 +24,7 @@ class AuthController {
 
       // Check if user already exists
       if (user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exists!" }] });
+        return res.status(400).json({ errors: [{ msg: 'User already exists!' }] });
       }
 
       const { permissions, credits } = planDetails[planEnum.FREE];
@@ -52,18 +50,13 @@ class AuthController {
         },
       };
 
-      jwt.sign(
-        payload,
-        appConfig.jwtSecret,
-        appConfig.jwtOptions,
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      jwt.sign(payload, appConfig.jwtSecret, appConfig.jwtOptions, (err, token) => {
+        if (err) {throw err;}
+        res.json({ token });
+      });
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).send('Server Error');
     }
   }
 
@@ -77,18 +70,14 @@ class AuthController {
     const { email, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
       if (!user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Invalid Credentials!" }] });
+        return res.status(400).json({ errors: [{ msg: 'Invalid Credentials!' }] });
       }
 
       const isMatched = await bcrypt.compare(password, user.password);
       if (!isMatched) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Invalid Credentials!" }] });
+        return res.status(400).json({ errors: [{ msg: 'Invalid Credentials!' }] });
       }
 
       const payload = {
@@ -97,18 +86,13 @@ class AuthController {
         },
       };
 
-      jwt.sign(
-        payload,
-        appConfig.jwtSecret,
-        appConfig.jwtOptions,
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      jwt.sign(payload, appConfig.jwtSecret, appConfig.jwtOptions, (err, token) => {
+        if (err) {throw err;}
+        res.json({ token });
+      });
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).send('Server Error');
     }
   }
 }

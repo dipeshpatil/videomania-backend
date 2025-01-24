@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
-const { creditConfig } = require("../config/secrets");
+const { creditConfig } = require('../config/secrets');
 
 const signJWTToken = (payload, jwtSecret, jwtOptions) => {
   return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ const decodeJWTToken = (token) => {
     const decoded = jwt.verify(token, creditConfig.jwtSecret);
     return decoded;
   } catch (error) {
-    console.log("Token Expired!");
+    console.log('Token Expired!');
     return null;
   }
 };

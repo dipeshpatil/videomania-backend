@@ -1,28 +1,24 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
-const UserController = require("../controllers/user");
+const UserController = require('../controllers/user');
 const user = new UserController();
 
 const {
   basicPermissionsRequiredValidator,
   basicRoleRequiredValidator,
-} = require("../validators/user");
+} = require('../validators/user');
 
-const { authenticateToken, authoriseRole } = require("../middlewares/auth");
-const { USER, ADMIN } = require("../enums/user");
+const { authenticateToken, authoriseRole } = require('../middlewares/auth');
+const { USER, ADMIN } = require('../enums/user');
 
 /**
  * @route   GET /user/role/:userId
  * @desc    Get roles for user
  * @access  Private (anyone with user role can do it)
  */
-router.get(
-  "/role/:userId",
-  [authenticateToken, authoriseRole(USER)],
-  user.getRole.bind(user)
-);
+router.get('/role/:userId', [authenticateToken, authoriseRole(USER)], user.getRole.bind(user));
 
 /**
  * @route   PUT /user/role/:userId
@@ -31,7 +27,7 @@ router.get(
  * @body    { role: <string> }
  */
 router.put(
-  "/role/:userId",
+  '/role/:userId',
   [authenticateToken, authoriseRole(ADMIN), basicRoleRequiredValidator],
   user.updateRole.bind(user)
 );
@@ -42,7 +38,7 @@ router.put(
  * @access  Private (anyone with admin role can do it)
  */
 router.get(
-  "/permission/:userId",
+  '/permission/:userId',
   [authenticateToken, authoriseRole(USER)],
   user.getPermissions.bind(user)
 );
@@ -54,7 +50,7 @@ router.get(
  * @body    { permissions: <string>, operation: <string> }
  */
 router.put(
-  "/permission/:userId",
+  '/permission/:userId',
   [authenticateToken, authoriseRole(ADMIN), basicPermissionsRequiredValidator],
   user.updatePermission.bind(user)
 );
@@ -64,27 +60,27 @@ router.put(
  * @desc    Get user details
  * @access  Private (anyone with token can get self details)
  */
-router.get("/", [authenticateToken], user.getUserDetails);
+router.get('/', [authenticateToken], user.getUserDetails);
 
 /**
  * @route   GET /user/videos
  * @desc    Get user video details
  * @access  Private (anyone with token can get self details)
  */
-router.get("/videos", [authenticateToken], user.getUserVideos);
+router.get('/videos', [authenticateToken], user.getUserVideos);
 
 /**
  * @route   GET /user/links
  * @desc    Get user links details
  * @access  Private (anyone with token can get self details)
  */
-router.get("/links", [authenticateToken], user.getUserLinks);
+router.get('/links', [authenticateToken], user.getUserLinks);
 
 /**
  * @route   GET /user/transactions
  * @desc    Get user transaction details
  * @access  Private (anyone with token can get self details)
  */
-router.get("/transactions", [authenticateToken], user.getUserTransactions);
+router.get('/transactions', [authenticateToken], user.getUserTransactions);
 
 module.exports = router;

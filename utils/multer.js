@@ -1,15 +1,15 @@
-const multer = require("multer");
-const path = require("path");
+const multer = require('multer');
+const path = require('path');
 
-const constants = require("../config/constants.json");
+const constants = require('../config/constants.json');
 
-const { hypheniseFileName } = require("./common");
+const { hypheniseFileName } = require('./common');
 
 // Set up multer storage configuration
 function getMulterStorageInstance() {
   return multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(constants.app.outputDirectory, "/")); // Set destination folder
+      cb(null, path.join(constants.app.outputDirectory, '/')); // Set destination folder
     },
     filename: function (req, file, cb) {
       // Save file with original filename, or customize this if needed
@@ -26,9 +26,7 @@ function getMulterUploadInstance() {
       const ext = path.extname(file.originalname).toLowerCase();
       if (!constants.app.allowedFileExtensions.includes(ext)) {
         // Instead of generic Error, pass an object with more details
-        return cb(
-          new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.originalname)
-        );
+        return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.originalname));
       }
       cb(null, true);
     },

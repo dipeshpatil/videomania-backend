@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: 'user',
       required: true,
     },
     credits: {
@@ -13,7 +13,7 @@ const transactionSchema = new mongoose.Schema(
     },
     action: {
       type: String,
-      enum: ["creditDeduction", "creditTopUp", "planPurchase"],
+      enum: ['creditDeduction', 'creditTopUp', 'planPurchase'],
       required: true,
     },
     description: {
@@ -25,10 +25,7 @@ const transactionSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { collection: "transactions" }
+  { collection: 'transactions' }
 );
 
-module.exports = Transaction = mongoose.model(
-  "transactions",
-  transactionSchema
-);
+module.exports = Transaction = mongoose.model('transactions', transactionSchema);

@@ -1,8 +1,8 @@
-const Transaction = require("../models/transaction");
-const BlacklistedToken = require("../models/blacklisted-tokens");
-const User = require("../models/user");
+const Transaction = require('../models/transaction');
+const BlacklistedToken = require('../models/blacklisted-tokens');
+const User = require('../models/user');
 
-const { transactionCreditAction } = require("../enums/transaction");
+const { transactionCreditAction } = require('../enums/transaction');
 
 const logTransaction = async (userId, credits, action, description) => {
   const transaction = new Transaction({
@@ -19,23 +19,13 @@ const logBlacklistedToken = async (userId, credits, token) => {
   await blacklistedToken.save();
 };
 
-const deductUserCredits = async (
-  userId,
-  userCredits,
-  planCredits,
-  transactionDesc
-) => {
+const deductUserCredits = async (userId, userCredits, planCredits, transactionDesc) => {
   const remainingCredits = userCredits - planCredits;
   await User.updateOne(
     { _id: userId },
     { $set: { credits: remainingCredits < 0 ? 0 : remainingCredits } }
   );
-  await logTransaction(
-    userId,
-    planCredits,
-    transactionCreditAction.DEDUCT,
-    transactionDesc
-  );
+  await logTransaction(userId, planCredits, transactionCreditAction.DEDUCT, transactionDesc);
 };
 
 const getUserExistingPlan = async (userId) => {
@@ -56,7 +46,7 @@ const adjustUserCredits = async (userId, credits, action, description) => {
 const adjustUserPlan = async (userId, planDetails) => {
   const { permissions, credits, type } = planDetails;
   await User.updateOne({ _id: userId }, { $set: { permissions, plan: type } });
-  await adjustUserCredits(userId, credits, "planPurchase", "Plan Purchase");
+  await adjustUserCredits(userId, credits, 'planPurchase', 'Plan Purchase');
 };
 
 module.exports = {

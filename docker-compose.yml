@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   app:
@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env
     volumes:
@@ -16,7 +16,7 @@ services:
       - redis
 
   redis:
-    image: "redis:latest"
+    image: 'redis:latest'
     ports:
-      - "6379:6379"
-    restart: "always"
+      - '6379:6379'
+    restart: 'always'

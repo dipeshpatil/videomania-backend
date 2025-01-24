@@ -1,7 +1,7 @@
-const { ShareableLink } = require("../models/share-link");
+const { ShareableLink } = require('../models/share-link');
 
 function hypheniseFileName(fileName) {
-  return fileName.toLowerCase().replace(/\s+/g, "-");
+  return fileName.toLowerCase().replace(/\s+/g, '-');
 }
 
 function getUniqueElements(arr) {
@@ -15,7 +15,7 @@ async function cleanUpExpiredLinks() {
     });
     console.log(`Number of expired links deleted: ${result.deletedCount}`);
   } catch (error) {
-    console.log("Error deleting expired rows:", error);
+    console.log('Error deleting expired rows:', error);
   }
 }
 

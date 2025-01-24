@@ -1,17 +1,15 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
-const TransactionController = require("../controllers/transaction");
+const TransactionController = require('../controllers/transaction');
 const transaction = new TransactionController();
 
-const {
-  basicTransactionTokenGenerationValidator,
-} = require("../validators/transaction");
+const { basicTransactionTokenGenerationValidator } = require('../validators/transaction');
 
-const { authenticateToken, authoriseRole } = require("../middlewares/auth");
-const { checkBlacklistedToken } = require("../middlewares/token");
-const { USER } = require("../enums/user");
+const { authenticateToken, authoriseRole } = require('../middlewares/auth');
+const { checkBlacklistedToken } = require('../middlewares/token');
+const { USER } = require('../enums/user');
 
 /**
  * @route   POST /transaction/generate
@@ -20,12 +18,8 @@ const { USER } = require("../enums/user");
  * @body  { userId: <ObjectId>, credits: <number> }
  */
 router.post(
-  "/generate",
-  [
-    authenticateToken,
-    authoriseRole(USER),
-    basicTransactionTokenGenerationValidator,
-  ],
+  '/generate',
+  [authenticateToken, authoriseRole(USER), basicTransactionTokenGenerationValidator],
   transaction.generateToken
 );
 
@@ -36,7 +30,7 @@ router.post(
  * @body  { token: <JWT Token> }
  */
 router.post(
-  "/commit",
+  '/commit',
   [authenticateToken, authoriseRole(USER), checkBlacklistedToken],
   transaction.commitTransaction
 );

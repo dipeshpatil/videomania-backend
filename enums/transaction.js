@@ -1,6 +1,6 @@
 const transactionCreditAction = {
-  TOPUP: "creditTopUp",
-  DEDUCT: "creditDeduction",
+  TOPUP: 'creditTopUp',
+  DEDUCT: 'creditDeduction',
 };
 
 module.exports = {

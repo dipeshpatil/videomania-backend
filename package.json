@@ -8,16 +8,21 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "encrypt:config": "TYPE=encrypt node crypt.js",
-    "decrypt:config": "TYPE=decrypt node crypt.js"
+    "decrypt:config": "TYPE=decrypt node crypt.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.3.6",
+    "eslint": "^9.18.0",
+    "eslint-plugin-node": "^11.1.0",
     "jest": "^29.7.0",
     "mocha": "^10.7.3",
     "nodemon": "^3.1.7",
+    "prettier": "^3.4.2",
     "supertest": "^7.0.0"
   },
   "dependencies": {

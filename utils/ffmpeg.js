@@ -1,4 +1,4 @@
-const ffmpeg = require("fluent-ffmpeg");
+const ffmpeg = require('fluent-ffmpeg');
 
 function getVideoDimensions(filepath) {
   return new Promise((resolve, reject) => {
@@ -13,7 +13,7 @@ function getVideoDimensions(filepath) {
         const height = videoStream.height;
         resolve({ width, height });
       } else {
-        reject("No video stream found in the file.");
+        reject('No video stream found in the file.');
       }
     });
   });
@@ -30,7 +30,7 @@ function getVideoDuration(filepath) {
       if (videoDuration) {
         resolve(videoDuration);
       } else {
-        reject("No video stream found in the file.");
+        reject('No video stream found in the file.');
       }
     });
   });

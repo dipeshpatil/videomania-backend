@@ -1,8 +1,8 @@
 const videoPermissions = {
-  UPLOAD: "UPLOAD",
-  TRIM: "TRIM",
-  SHARE: "SHARE",
-  MERGE: "MERGE",
+  UPLOAD: 'UPLOAD',
+  TRIM: 'TRIM',
+  SHARE: 'SHARE',
+  MERGE: 'MERGE',
 };
 
 const planCredits = {
@@ -13,9 +13,9 @@ const planCredits = {
 };
 
 const planEnum = {
-  FREE: "FREE",
-  PRO: "PRO",
-  ULTRA: "ULTRA",
+  FREE: 'FREE',
+  PRO: 'PRO',
+  ULTRA: 'ULTRA',
 };
 
 const planPriorityMapping = {
@@ -25,9 +25,9 @@ const planPriorityMapping = {
 };
 
 const planPurchaseErrorCodes = {
-  SAME_PLAN_ERROR: "same-plan-error",
-  TIER_PLAN_ERROR: "tier-plan-error",
-  PLAN_PURCHASE_GOAHEAD: "plan-purchase-goahead",
+  SAME_PLAN_ERROR: 'same-plan-error',
+  TIER_PLAN_ERROR: 'tier-plan-error',
+  PLAN_PURCHASE_GOAHEAD: 'plan-purchase-goahead',
 };
 
 const planDetails = {
@@ -38,11 +38,7 @@ const planDetails = {
   },
   PRO: {
     type: planEnum.PRO,
-    permissions: [
-      videoPermissions.UPLOAD,
-      videoPermissions.SHARE,
-      videoPermissions.TRIM,
-    ],
+    permissions: [videoPermissions.UPLOAD, videoPermissions.SHARE, videoPermissions.TRIM],
     credits: 500,
   },
   ULTRA: {

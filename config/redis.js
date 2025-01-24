@@ -1,6 +1,6 @@
-const redis = require("redis");
+const redis = require('redis');
 
-const { redisConfig } = require("./secrets");
+const { redisConfig } = require('./secrets');
 
 let redisClient = null;
 
@@ -10,11 +10,11 @@ if (!redisClient) {
     password: redisConfig.password || null,
   });
 
-  redisClient.on("error", (err) => {
-    console.error("Redis connection error: ", err.message);
+  redisClient.on('error', (err) => {
+    console.error('Redis connection error: ', err.message);
   });
 
-  redisClient.on("connect", () => {
+  redisClient.on('connect', () => {
     console.log(`Redis Connected on PORT: ${redisConfig.port}`);
   });
 }
@@ -23,7 +23,7 @@ if (!redisClient) {
   try {
     await redisClient.connect();
   } catch (error) {
-    console.error("Failed to connect to Redis: ", error.message);
+    console.error('Failed to connect to Redis: ', error.message);
   }
 })();
 
