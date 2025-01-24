@@ -51,7 +51,9 @@ class AuthController {
       };
 
       jwt.sign(payload, appConfig.jwtSecret, appConfig.jwtOptions, (err, token) => {
-        if (err) {throw err;}
+        if (err) {
+          throw err;
+        }
         res.json({ token });
       });
     } catch (err) {
@@ -87,7 +89,9 @@ class AuthController {
       };
 
       jwt.sign(payload, appConfig.jwtSecret, appConfig.jwtOptions, (err, token) => {
-        if (err) {throw err;}
+        if (err) {
+          throw err;
+        }
         res.json({ token });
       });
     } catch (err) {

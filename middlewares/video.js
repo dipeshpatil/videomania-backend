@@ -8,8 +8,9 @@ const authorizePermission = (requiredPermission) => {
 
     const userRole = req.user.role;
     // Bypass For Admin
-    if (userRole === ADMIN) {next();}
-    else {
+    if (userRole === ADMIN) {
+      next();
+    } else {
       const userPermissions = req.user.permissions;
 
       if (userPermissions.includes(requiredPermission)) {

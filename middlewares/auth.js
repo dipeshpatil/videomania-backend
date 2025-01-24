@@ -28,11 +28,15 @@ const authoriseRole = (role) => {
   return (req, res, next) => {
     const userRole = req.user.role;
     // Bypass For Admin
-    if (userRole === ADMIN) {next();}
-    else {
+    if (userRole === ADMIN) {
+      next();
+    } else {
       try {
-        if (req.user.role === role) {next();}
-        else {return res.status(403).json({ message: 'Invalid Role!' });}
+        if (req.user.role === role) {
+          next();
+        } else {
+          return res.status(403).json({ message: 'Invalid Role!' });
+        }
       } catch (error) {
         res.status(403).json({ message: `Invalid Role! ${error.message}` });
       }

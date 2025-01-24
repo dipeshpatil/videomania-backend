@@ -14,7 +14,9 @@ class UserController {
     const { userId } = req.params;
     try {
       const user = await User.findById(userId).select('-password');
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
       return res.status(200).json({ permissions: user.permissions });
     } catch (error) {
       console.error(err.message);
@@ -38,18 +40,18 @@ class UserController {
       if (operation === 'add' && userPermissions.includes(permission)) {
         return res.status(400).json({ msg: 'Permisson Already Granted!' });
       } else if (operation === 'remove' && !userPermissions.includes(permission)) {
-        return res.status(400).json({ msg: 'Permisson Doesn\'t Exist!' });
+        return res.status(400).json({ msg: "Permisson Doesn't Exist!" });
       }
 
       switch (operation) {
-      case 'add':
-        userPermissions = this.#addPermission(userPermissions, permission);
-        break;
-      case 'remove':
-        userPermissions = this.#removePermissions(userPermissions, permission);
-        break;
-      default:
-        return res.status(400).json({ msg: 'Invalid Operation!' });
+        case 'add':
+          userPermissions = this.#addPermission(userPermissions, permission);
+          break;
+        case 'remove':
+          userPermissions = this.#removePermissions(userPermissions, permission);
+          break;
+        default:
+          return res.status(400).json({ msg: 'Invalid Operation!' });
       }
 
       userPermissions = getUniqueElements(userPermissions);
@@ -68,7 +70,9 @@ class UserController {
 
     try {
       const user = await User.findById(userId).select('-password');
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
       return res.status(200).json({ role: user.role });
     } catch (err) {
       console.error(err.message);
@@ -102,7 +106,9 @@ class UserController {
     }
     try {
       const { user } = req;
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
       return res.status(200).json({ user });
     } catch (error) {
       console.error(error.message);
@@ -120,7 +126,9 @@ class UserController {
       const limit = Number(req.query.limit) || 10;
       const pageNumber = Number(req.query.pageNumber) || 1;
 
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
 
       const videos = await paginate({
         options: {
@@ -147,7 +155,9 @@ class UserController {
       const limit = Number(req.query.limit) || 10;
       const pageNumber = Number(req.query.pageNumber) || 1;
       const { user } = req;
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
 
       const result = await paginate({
         options: {
@@ -173,12 +183,16 @@ class UserController {
   async getUserTransactions(req, res) {
     try {
       const { user } = req;
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
 
       const limit = Number(req.query.limit) || 10;
       const pageNumber = Number(req.query.pageNumber) || 1;
 
-      if (!user) {return res.status(404).json({ msg: 'User not found!' });}
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found!' });
+      }
 
       const transactions = await paginate({
         options: {

@@ -31,8 +31,9 @@ class TransactionController {
     try {
       const { token } = req.body;
       const payload = decodeJWTToken(token);
-      if (!payload)
-      {return res.status(400).json({ msg: 'Transaction Failed, Token Expired Likely!' });}
+      if (!payload) {
+        return res.status(400).json({ msg: 'Transaction Failed, Token Expired Likely!' });
+      }
 
       const {
         transaction: { userId, credits },

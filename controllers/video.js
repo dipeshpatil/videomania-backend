@@ -39,7 +39,9 @@ class VideoController {
       }
 
       ffmpeg.ffprobe(path, async (err, metadata) => {
-        if (err) {return res.status(500).json({ error: 'Invalid video file' });}
+        if (err) {
+          return res.status(500).json({ error: 'Invalid video file' });
+        }
 
         const duration = metadata.format.duration;
 
@@ -175,8 +177,9 @@ class VideoController {
       const { videoIds } = req.body;
       const videos = await Video.find({ _id: { $in: videoIds } });
 
-      if (videos.length !== videoIds.length)
-      {return res.status(404).json({ error: 'One or more videos not found' });}
+      if (videos.length !== videoIds.length) {
+        return res.status(404).json({ error: 'One or more videos not found' });
+      }
 
       const s3DownloadPromises = videos.map((video, index) => {
         const tempPath = path.join('/tmp', `video_${index}_${Date.now()}.mp4`);
@@ -371,8 +374,9 @@ class VideoController {
         user: req.user._id,
       });
 
-      if (video && video.title === videoName)
-      {return res.status(400).json({ error: 'Video title already exists!' });}
+      if (video && video.title === videoName) {
+        return res.status(400).json({ error: 'Video title already exists!' });
+      }
 
       await Video.findByIdAndUpdate(videoId, {
         $set: { title: videoName },
